@@ -31,11 +31,23 @@ class ReleaseDialog(
     }
 
     override fun createCenterPanel(): JComponent {
-        return JPanel().apply {
-            layout = BoxLayout(this, BoxLayout.Y_AXIS)
-            add(revisionButton)
-            add(featureButton)
-            add(majorButton)
+
+        return panel {
+            row {
+                revisionButton()
+                label("v${currentVersion.bump(ReleaseType.REVISION)}")
+                    .align(AlignX.RIGHT)
+            }
+            row {
+                featureButton()
+                label("v${currentVersion.bump(ReleaseType.FEATURE)}")
+                    .align(AlignX.RIGHT)
+            }
+            row {
+                majorButton()
+                label("v${currentVersion.bump(ReleaseType.MAJOR)}")
+                    .align(AlignX.RIGHT)
+            }
         }
     }
 
