@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.2"
+        stroke-linecap="round"
+        stroke-linejoin="round">
+
+    <!-- left branch dot -->
+    <circle cx="4" cy="4" r="1.2"/>
+
+    <!-- right branch dot -->
+    <circle cx="12" cy="4" r="1.2"/>
+
+    <!-- branch lines -->
+    <path d="M4 5.5 V8"/>
+    <path d="M12 5.5 V8"/>
+
+    <!-- merge -->
+    <path d="M4 8 L8 10 L12 8"/>
+
+    <!-- deploy arrow -->
+    <path d="M8 10 V14"/>
+    <path d="M6.5 12.5 L8 14 L9.5 12.5"/>
+
+    <!-- tag (small) -->
+    <path d="M10.5 11.5 h2 v2 h-2 l-0.7 -1 z"/>
+</svg>
