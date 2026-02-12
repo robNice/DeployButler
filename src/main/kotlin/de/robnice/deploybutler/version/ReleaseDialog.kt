@@ -2,12 +2,14 @@ package de.robnice.deploybutler.version
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.dsl.builder.AlignX
 import de.robnice.deploybutler.i18n.message
 import javax.swing.*
 
 class ReleaseDialog(
     project: Project,
-    currentVersion: Version
+    private val currentVersion: Version
 ) : DialogWrapper(project) {
 
     private val revisionButton = JRadioButton(
@@ -34,17 +36,17 @@ class ReleaseDialog(
 
         return panel {
             row {
-                revisionButton()
+                cell(revisionButton)
                 label("v${currentVersion.bump(ReleaseType.REVISION)}")
                     .align(AlignX.RIGHT)
             }
             row {
-                featureButton()
+                cell(featureButton)
                 label("v${currentVersion.bump(ReleaseType.FEATURE)}")
                     .align(AlignX.RIGHT)
             }
             row {
-                majorButton()
+                cell(majorButton)
                 label("v${currentVersion.bump(ReleaseType.MAJOR)}")
                     .align(AlignX.RIGHT)
             }
