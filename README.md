@@ -1,137 +1,148 @@
 # DeployButler
 
-DeployButler ist ein JetBrains-IDE-Plugin, das dich beim „Deploy per Git“ unterstützt: wiederkehrende Schritte werden in einen geführten Ablauf gepackt, damit Releases konsistent, nachvollziehbar und mit weniger Fehlerpotenzial entstehen.
+DeployButler is a JetBrains IDE plugin that supports you with “deploy via Git”: recurring steps are bundled into a guided flow so that releases are consistent, traceable, and created with fewer opportunities for mistakes.
 
 ---
 
-## Inhaltsverzeichnis
+## Table of Contents
 
-- [Was macht das Plugin, wofür wird es benötigt](#was-macht-das-plugin-wofür-wird-es-benötigt)
-- [Optionen beim Ausführen](#optionen-beim-ausführen)
-    - [Versions-Tagging (Release-Typ)](#versions-tagging-release-typ)
-    - [Vorschau-Mode (Dry Run)](#vorschau-mode-dry-run)
-    - [Bestätigung vor Deploy](#bestätigung-vor-deploy)
-    - [Rebase statt Merge](#rebase-statt-merge)
+- [What the plugin does and why you need it](#what-the-plugin-does-and-why-you-need-it)
+- [Run options](#run-options)
+  - [Version tagging (release type)](#version-tagging-release-type)
+  - [Preview mode (dry run)](#preview-mode-dry-run)
+  - [Confirmation before deploy](#confirmation-before-deploy)
+  - [Rebase instead of merge](#rebase-instead-of-merge)
 - [Settings](#settings)
-- [Übersetzungen](#übersetzungen)
-- [Lizenz](#lizenz)
+- [Translations](#translations)
+- [License](#license)
 
 ---
 
-## Was macht das Plugin, wofür wird es benötigt
+## What the plugin does and why you need it
 
-DeployButler bündelt typische Git-Schritte rund um einen Release-/Deploy-Prozess in einer klaren, geführten Aktion innerhalb der IDE.
+DeployButler bundles typical Git steps around a release/deploy process into a clear, guided action inside the IDE.
 
-Typische Anwendungsfälle:
+Typical use cases:
 
-- Du möchtest Deploys immer nach dem gleichen Muster durchführen (gleiches Tagging-Schema, gleicher Ziel-Branch, gleiche Checks).
-- Du willst vor dem eigentlichen Deploy sehen, *was passieren würde*, bevor irgendetwas verändert wird.
-- Du möchtest Fehler vermeiden, die bei manuellen Git-Schritten gerne passieren (falscher Branch, unsauberer Working Tree, falsches Tag, etc.).
-- Du hast CI/CD-Workflows, die auf Versions-Tags reagieren (z. B. `v*`) und dadurch automatisch Builds/Artefakte erzeugen (Release-APK, Docker-Images, Pakete, Changelogs, GitHub Releases etc.). DeployButler sorgt dafür, dass Tags konsistent und reproduzierbar erstellt werden – damit der Build-Prozess zuverlässig und ohne manuelle „Tagging-Fehler“ startet.
+- You want to run deploys following the same pattern every time (same tagging scheme, same target branch, same checks).
+- You want to see *what would happen* before the actual deploy, before anything is changed.
+- You want to avoid mistakes that commonly happen with manual Git steps (wrong branch, dirty working tree, wrong tag, etc.).
+- You have CI/CD workflows that react to version tags (e.g. `v*`) and automatically produce builds/artifacts (release APKs, Docker images, packages, changelogs, GitHub releases, etc.). DeployButler ensures tags are created consistently and reproducibly — so the build process starts reliably without manual “tagging mistakes”.
+
 ---
 
-## Optionen beim Ausführen
 
-Beim Start des Deploy-Ablaufs kannst du unterschiedliche Optionen aktivieren, je nachdem wie „sicher“ bzw. wie „automatisch“ der Ablauf sein soll.
+## Running it
 
-### Versions-Tagging (Release-Typ)
+Just click on the DeployButler icon in the status bar:
 
-DeployButler kann einen Release-Typ auswählen lassen, um daraus den nächsten Versions-Tag abzuleiten.
+![Deploy-Action](docs/assets/action.png)
 
-Üblicherweise gibt es drei Varianten:
+## Run options
 
-![Release-Typen](./docs/assets/versions.png)
-![Release-Typen](/docs/assets/versions.png)
-![Release-Typen](docs/assets/versions.png)
-<img src="docs/assets/versions.png" alt="Release-Typen" width="600">
+When starting the deploy flow, you can enable different options depending on how “safe” vs. how “automatic” you want the flow to be.
 
-- **Revision / Bug-Fix**: für kleine Korrekturen ohne neue Features
-- **Feature**: für neue Funktionen mit kompatiblen Änderungen
-- **Major**: für größere Änderungen / potenzielle Breaking Changes
+### Version tagging (release type)
 
-Zusätzlich kann ein **Tag-Prefix** genutzt werden (z. B. `v`), damit Tags z. B. als `v1.4.0` statt `1.4.0` erstellt werden.
+DeployButler can let you choose a release type to derive the next version tag.
 
-> Hinweis: Welche Version als „nächste“ gilt, hängt vom Tagging-Schema und deinen vorhandenen Tags ab.
+Typically there are three variants:
 
-### Vorschau-Mode (Dry Run)
+![Release types](docs/assets/versions.png)
 
-Im **Dry Run** wird der Ablauf so ausgeführt, dass keine dauerhaften Änderungen entstehen.
+<img src="docs/assets/versions.png" alt="Release types" width="600">
 
-Das ist ideal, wenn du:
+- **Revision / bug-fix**: for small fixes without new features
+- **Feature**: for new functionality with compatible changes
+- **Major**: for bigger changes / potential breaking changes
 
-- erst prüfen willst, ob alles korrekt konfiguriert ist,
-- den geplanten Ablauf nachvollziehen willst,
-- oder dir vorab anzeigen lassen möchtest, welche Schritte/Änderungen anstehen.
+Additionally, a **tag prefix** can be used (e.g. `v`) so tags are created as `v1.4.0` instead of `1.4.0`.
 
-### Bestätigung vor Deploy
+> Notes:
+> - Which version is considered “next” depends on your tagging scheme and your existing tags.
+> - The tag prefix can be changed in the settings. (It may also be empty.)
 
-Wenn **Bestätigung vor Deploy** aktiv ist, zeigt DeployButler vor dem Ausführen eine Vorschau an und fragt aktiv nach, ob fortgefahren werden soll.
+### Preview mode (dry run)
 
-Das ist hilfreich, wenn du zwar geführt arbeiten willst, aber vor dem „Point of no return“ nochmal bewusst zustimmen möchtest.
+In **dry run**, the flow is executed in a way that no permanent changes are made.
 
-### Rebase statt Merge
+This is ideal if you want to:
 
-Wenn **Rebase statt Merge** aktiv ist, wird beim Zusammenführen eher ein Rebase-orientierter Ablauf verwendet (statt klassischem Merge).
+- first check that everything is configured correctly,
+- understand the planned flow,
+- or see in advance which steps/changes are coming.
 
-Das kann sinnvoll sein, wenn du:
+### Confirmation before deploy
 
-- eine linearere Historie bevorzugst,
-- Merge-Commits vermeiden willst,
-- oder dein Team-/Repo-Workflow darauf ausgelegt ist.
+If **confirmation before deploy** is enabled, DeployButler shows a preview before execution and explicitly asks whether it should proceed.
+
+![Preview](docs/assets/preview.png)
+
+This is helpful if you want a guided flow, but still want to consciously confirm before the “point of no return”.
+
+### Rebase instead of merge
+
+If **rebase instead of merge** is enabled, a more rebase-oriented approach is used for integrating changes (instead of a classic merge).
+
+This can make sense if you:
+
+- prefer a more linear history,
+- want to avoid merge commits,
+- or your team/repo workflow is built around it.
 
 ---
 
 ## Settings
 
-DeployButler bietet Settings, um den Ablauf an deinen Workflow anzupassen:
+DeployButler provides settings to adapt the flow to your workflow:
 
-- **Dry run (nur Vorschau, keine Änderungen)**  
-  Führt den Ablauf im Vorschau-Modus aus.
+- **Dry run (preview only, no changes)**  
+  Runs the flow in preview mode.
 
-- **Ziel-Branch**  
-  Der Branch, auf den der Deploy-/Release-Prozess ausgerichtet ist (z. B. `main`, `master`, `live`).
+- **Target branch**  
+  The branch the deploy/release process is aligned with (e.g. `main`, `master`, `live`).
 
 - **Remote**  
-  Das Git-Remote, das für Fetch/Push verwendet wird (typisch `origin`).
+  The Git remote used for fetch/push (typically `origin`).
 
-- **Tag-Prefix**  
-  Optionales Prefix für Versions-Tags (z. B. `v` → `v1.2.3`).
+- **Tag prefix**  
+  Optional prefix for version tags (e.g. `v` → `v1.2.3`).
 
-- **Rebase statt Merge**  
-  Nutzt einen Rebase-orientierten Ablauf statt Merge.
+- **Rebase instead of merge**  
+  Uses a rebase-oriented flow instead of merge.
 
-- **Bestätigung vor Deploy (Vorschau-Dialog)**  
-  Zeigt vor dem Ausführen eine Vorschau und fragt nach Zustimmung.
-
----
-
-## Übersetzungen
-
-DeployButler ist mehrsprachig. Aktuell sind folgende Sprachen enthalten:
-
-- Englisch (default)
-- Deutsch
-- Spanisch
-- Französisch
-- Italienisch
-- Japanisch
-- Koreanisch
-- Niederländisch
-- Polnisch
-- Portugiesisch
-- Russisch
-- Türkisch
-
-Contributions sind sehr willkommen — besonders für:
-
-- Korrekturen an bestehenden Übersetzungen
-- zusätzliche Sprachen
-- einheitliche Begrifflichkeiten (z. B. „Deploy“, „Release“, „Preview“, etc.)
-
-Wenn du etwas verbessern willst: einfach einen PR mit den angepassten Sprachdateien erstellen.
+- **Confirmation before deploy (preview dialog)**  
+  Shows a preview before execution and asks for confirmation.
 
 ---
 
-## Lizenz
+## Translations
 
-MIT License
+DeployButler is multilingual. Currently the following languages are included:
+
+- English (default)
+- German
+- Spanish
+- French
+- Italian
+- Japanese
+- Korean
+- Dutch
+- Polish
+- Portuguese
+- Russian
+- Turkish
+
+Contributions are very welcome — especially for:
+
+- corrections to existing translations
+- additional languages
+- consistent terminology (e.g. “deploy”, “release”, “preview”, etc.)
+
+If you want to improve something: just open a PR with the updated language files.
+
+---
+
+## License
+
+[`MIT`](./LICENSE)
