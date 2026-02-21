@@ -1,0 +1,46 @@
+<!-- Plugin Configuration File: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <resource-bundle>messages.messages</resource-bundle>
+
+    <id>de.robnice.deploybutler</id>
+
+    <name>DeployButler</name>
+
+    <vendor url="https://github.com/robNice">robnice</vendor>
+    <description><![CDATA[
+        One-click deployment helper with version bumping and Git safety checks.
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>Git4Idea</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService
+                serviceImplementation="de.robnice.deploybutler.settings.DeploySettingsState"/>
+
+        <applicationConfigurable
+                key="settings.title"
+                instance="de.robnice.deploybutler.settings.DeploySettingsConfigurable"/>
+
+        <notificationGroup
+                id="DeployButler"
+                displayType="BALLOON"
+                isLogByDefault="true"
+
+        />
+    </extensions>
+
+
+    <actions>
+
+        <action
+                id="DeployButler.DeployAction"
+                class="de.robnice.deploybutler.action.DeployAction"
+                text="%action.deploy"
+                description="%action.deploy.desc"
+                icon="/icons/deploy.svg">
+            <add-to-group group-id="MainToolbarRight" anchor="last"/>
+        </action>
+
+    </actions>
+</idea-plugin>
