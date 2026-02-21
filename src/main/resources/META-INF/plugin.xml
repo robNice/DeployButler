@@ -36,8 +36,6 @@
         <action
                 id="DeployButler.DeployAction"
                 class="de.robnice.deploybutler.action.DeployAction"
-                text="%Action.Deploy"
-                description="%action.deploy.desc"
                 icon="/icons/deploy.svg">
             <add-to-group group-id="MainToolbarRight" anchor="last"/>
         </action>
