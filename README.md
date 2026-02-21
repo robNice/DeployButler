@@ -50,8 +50,6 @@ Typically there are three variants:
 
 ![Release types](docs/assets/versions.png)
 
-<img src="docs/assets/versions.png" alt="Release types" width="600">
-
 - **Revision / bug-fix**: for small fixes without new features
 - **Feature**: for new functionality with compatible changes
 - **Major**: for bigger changes / potential breaking changes

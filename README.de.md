@@ -47,8 +47,6 @@ DeployButler kann einen Release-Typ auswählen lassen, um daraus den nächsten V
 
 ![Release-Typen](docs/assets/versions.png)
 
-<img src="docs/assets/versions.png" alt="Release-Typen" width="600">
-
 - **Revision / Bug-Fix**: für kleine Korrekturen ohne neue Features
 - **Feature**: für neue Funktionen mit kompatiblen Änderungen
 - **Major**: für größere Änderungen / potenzielle Breaking Changes
