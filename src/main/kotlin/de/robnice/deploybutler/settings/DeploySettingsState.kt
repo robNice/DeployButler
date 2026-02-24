@@ -9,7 +9,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil
 )
 class DeploySettingsState : PersistentStateComponent<DeploySettingsState> {
     var dryRunEnabled: Boolean = false
-    var targetBranch: String = "live"
+    var targetBranch: String = "main"
     var remoteName: String = "origin"
     var tagPrefix: String = "v"
     var useRebase: Boolean = false
