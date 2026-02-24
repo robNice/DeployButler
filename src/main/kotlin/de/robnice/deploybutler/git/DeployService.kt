@@ -188,12 +188,36 @@ class DeployService(
             DeployNotifications.error(project, message("deploy.gitFailed", e.message ?: ""))
         } finally {
             try {
-                if (repo.currentBranch?.name != startBranch) {
-                    Git.getInstance().runCommand(GitLineHandler(project, repo.root, GitCommand.CHECKOUT).apply {
+                repo.update()
+
+                val result = Git.getInstance().runCommand(
+                    GitLineHandler(project, repo.root, GitCommand.CHECKOUT).apply {
                         addParameters(startBranch)
-                    })
+                    }
+                )
+
+                repo.update()
+
+                if (!result.success()) {
+                    val err = buildString {
+                        if (result.errorOutput.isNotEmpty()) append(result.errorOutput.joinToString("\n"))
+                        if (result.output.isNotEmpty()) {
+                            if (isNotBlank()) append("\n")
+                            append(result.output.joinToString("\n"))
+                        }
+                    }.ifBlank { message("deploy.restoreBranch.unknownError") }
+
+                    DeployNotifications.error(
+                        project,
+                        message("deploy.restoreBranch.failed", startBranch, err)
+                    )
                 }
-            } catch (_: Exception) { }
+            } catch (e: Exception) {
+                DeployNotifications.error(
+                    project,
+                    message("deploy.restoreBranch.failed", startBranch, e.message ?: message("deploy.restoreBranch.unknownError"))
+                )
+            }
         }
     }
 }
