@@ -15,10 +15,10 @@
     <depends>Git4Idea</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService
+        <projectService
                 serviceImplementation="de.robnice.deploybutler.settings.DeploySettingsState"/>
 
-        <applicationConfigurable
+        <projectConfigurable
                 key="settings.title"
                 instance="de.robnice.deploybutler.settings.DeploySettingsConfigurable"/>
 

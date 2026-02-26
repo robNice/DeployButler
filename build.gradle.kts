@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "de.robnice"
-version = "1.0.3"
+version = "1.0.3.2"
 
 repositories {
     mavenCentral()
@@ -37,7 +37,8 @@ intellijPlatform {
         }
 
         changeNotes = """
-            Initial version of DeployButler.
+            Settings now saved per project, not global.
+            Default-Settings changed (Dry-Run enabled, default target branch is now "main").
         """.trimIndent()
     }
 }

@@ -8,7 +8,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil
     storages = [Storage("deploybutler.xml")]
 )
 class DeploySettingsState : PersistentStateComponent<DeploySettingsState> {
-    var dryRunEnabled: Boolean = false
+    var dryRunEnabled: Boolean = true
     var targetBranch: String = "main"
     var remoteName: String = "origin"
     var tagPrefix: String = "v"

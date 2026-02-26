@@ -15,7 +15,7 @@ class DeployAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-        val settings = service<DeploySettingsState>()
+        val settings = project.service<DeploySettingsState>()
 
         if (settings.confirmationsEnabled) {
             val result = Messages.showYesNoDialog(
