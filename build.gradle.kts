@@ -39,6 +39,7 @@ intellijPlatform {
         changeNotes = """
             Settings now saved per project, not global.
             Default-Settings changed (Dry-Run enabled, default target branch is now "main").
+            Update preview dialog layout with padding and fixed dimensions
         """.trimIndent()
     }
 }

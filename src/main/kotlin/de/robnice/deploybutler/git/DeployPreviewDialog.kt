@@ -4,6 +4,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.ui.components.JBScrollPane
 import de.robnice.deploybutler.i18n.message
+import java.awt.Dimension
+import java.awt.Insets
 import javax.swing.JComponent
 import javax.swing.JTextArea
 
@@ -18,6 +20,11 @@ class DeployPreviewDialog(
         lineWrap = true
         wrapStyleWord = true
         caretPosition = 0
+        margin = Insets(12, 12, 12, 12)
+    }
+
+    private val scrollPane = JBScrollPane(textArea).apply {
+        preferredSize = Dimension(520, 360)
     }
 
     init {
@@ -32,6 +39,6 @@ class DeployPreviewDialog(
         init()
     }
 
-    override fun createCenterPanel(): JComponent = JBScrollPane(textArea)
+    override fun createCenterPanel(): JComponent = scrollPane
     override fun isOKActionEnabled(): Boolean = true
 }
