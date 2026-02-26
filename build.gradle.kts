@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "de.robnice"
-version = "1.0.3.2"
+version = "1.0.4"
 
 repositories {
     mavenCentral()
