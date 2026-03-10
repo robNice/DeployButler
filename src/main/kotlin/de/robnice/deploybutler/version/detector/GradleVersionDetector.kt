@@ -7,7 +7,9 @@ class GradleVersionDetector : VersionDetector {
 
     override val id: String = "gradle"
 
-    private val versionRegex = Regex("""\bversion\s*=\s*["']([^"']+)["']""")
+    private val versionRegex = Regex(
+        """\b(?:versionName|version)\s*(?:=)?\s*["']([^"']+)["']"""
+    )
 
     override fun detect(repoRoot: File, settings: DeploySettingsState): String? {
         val candidates = buildList {
