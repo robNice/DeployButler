@@ -37,9 +37,24 @@ intellijPlatform {
         }
 
         changeNotes = """
-            Settings now saved per project, not global.
-            Default-Settings changed (Dry-Run enabled, default target branch is now "main").
-            Update preview dialog layout with padding and fixed dimensions
+          <h2>New</h2>
+  <ul>
+    <li>Added automatic project version detection for release tagging.</li>
+    <li>Supported version detection sources:
+      <ul>
+        <li>Gradle</li>
+        <li>Android Gradle projects (including <code>app/build.gradle</code> and <code>app/build.gradle.kts</code>)</li>
+        <li><code>package.json</code></li>
+        <li><code>composer.json</code></li>
+        <li><code>pom.xml</code></li>
+      </ul>
+    </li>
+    <li>Added configurable custom version detection via file path and regular expression.</li>
+    <li>Added preferred version detector setting to prioritize a specific source when multiple supported files exist.</li>
+    <li>Release dialog now offers <b>Tag from project file</b> when a valid version can be detected automatically.</li>
+  </ul>
+
+
         """.trimIndent()
     }
 }
