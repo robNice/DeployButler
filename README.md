@@ -98,7 +98,7 @@ DeployButler provides settings to adapt the flow to your workflow:
   Runs the flow in preview mode.
 
 - **Target branch**  
-  The branch the deploy/release process is aligned with (e.g. `main`, `master`, `live`).
+  The branch the deploy/release process is aligned with (e.g. `main`, `master`).
 
 - **Remote**  
   The Git remote used for fetch/push (typically `origin`).

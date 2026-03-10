@@ -95,7 +95,7 @@ DeployButler bietet Settings, um den Ablauf an deinen Workflow anzupassen:
   Führt den Ablauf im Vorschau-Modus aus.
 
 - **Ziel-Branch**  
-  Der Branch, auf den der Deploy-/Release-Prozess ausgerichtet ist (z. B. `main`, `master`, `live`).
+  Der Branch, auf den der Deploy-/Release-Prozess ausgerichtet ist (z. B. `main`, `master`).
 
 - **Remote**  
   Das Git-Remote, das für Fetch/Push verwendet wird (typisch `origin`).

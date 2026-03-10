@@ -85,7 +85,7 @@ class DeployService(
         }
 
         val sourceBranch = startBranch
-        val targetBranch = settings.targetBranch.trim().ifBlank { "live" }
+        val targetBranch = settings.targetBranch.trim().ifBlank { "main" }
         val remote = settings.remoteName.trim().ifBlank { "origin" }
         val tagPrefix = settings.tagPrefix.trim().ifBlank { "v" }
 
