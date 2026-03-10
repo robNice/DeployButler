@@ -8,6 +8,7 @@ import de.robnice.deploybutler.settings.DeploySettingsState
 import de.robnice.deploybutler.version.ReleaseDialog
 import de.robnice.deploybutler.version.ReleaseType
 import de.robnice.deploybutler.version.Version
+import de.robnice.deploybutler.version.VersionDetectionService
 import de.robnice.deploybutler.version.VersionService
 import git4idea.GitUtil
 import git4idea.commands.Git
@@ -52,17 +53,6 @@ class DeployService(
         return result.output.isNotEmpty()
     }
 
-    private fun readVersionFromBuildGradleKts(repo: GitRepository): String? {
-        val file = File(repo.root.path, "build.gradle.kts")
-        if (!file.exists()) return null
-        val text = runCatching { file.readText(Charsets.UTF_8) }.getOrNull() ?: return null
-
-        // matches: version = "1.2.3" OR version = '1.2.3'
-        val regex = Regex("\\bversion\\s*=\\s*[\"']([^\"']+)[\"']")
-        val m = regex.find(text) ?: return null
-        return m.groupValues.getOrNull(1)?.trim()?.takeIf { it.isNotBlank() }
-    }
-
     private fun parseStrictSemver(raw: String): Version? {
         val m = Regex("^(\\d+)\\.(\\d+)\\.(\\d+)$").matchEntire(raw.trim()) ?: return null
         return Version(m.groupValues[1].toInt(), m.groupValues[2].toInt(), m.groupValues[3].toInt())
@@ -101,13 +91,14 @@ class DeployService(
 
             val versionService = VersionService(project, repo, tagPrefix)
             val currentVersion = versionService.getLatestVersion()
-            val buildGradleVersionText = readVersionFromBuildGradleKts(repo)
+            val versionDetectionService = VersionDetectionService(settings)
+            val detectedVersionText = versionDetectionService.detect(File(repo.root.path))
 
             val releaseTypeHolder = AtomicReference<ReleaseType?>(null)
             val okHolder = AtomicReference(false)
 
             ApplicationManager.getApplication().invokeAndWait {
-                val dialog = ReleaseDialog(project, currentVersion, buildGradleVersionText, settings.tagPrefix)
+                val dialog = ReleaseDialog(project, currentVersion, detectedVersionText, settings.tagPrefix)
                 val ok = dialog.showAndGet()
                 okHolder.set(ok)
                 if (ok) releaseTypeHolder.set(dialog.getSelectedType())
@@ -123,8 +114,8 @@ class DeployService(
             val newTag: String? = when (releaseType) {
                 ReleaseType.NONE -> null
 
-                ReleaseType.FROM_BUILD_GRADLE -> {
-                    val v = buildGradleVersionText ?: run {
+                ReleaseType.FROM_PROJECT_FILE -> {
+                    val v = detectedVersionText ?: run {
                         DeployNotifications.error(project, message("deploy.buildVersionMissing"))
                         return
                     }

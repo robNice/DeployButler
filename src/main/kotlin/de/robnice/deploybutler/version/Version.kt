@@ -10,7 +10,7 @@ data class Version(val major: Int, val minor: Int, val patch: Int) : Comparable<
     fun bump(type: ReleaseType): Version =
         when (type) {
             ReleaseType.NONE,
-            ReleaseType.FROM_BUILD_GRADLE ->
+            ReleaseType.FROM_PROJECT_FILE ->
                 this
 
             ReleaseType.REVISION ->

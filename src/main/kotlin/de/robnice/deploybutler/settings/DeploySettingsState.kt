@@ -14,6 +14,10 @@ class DeploySettingsState : PersistentStateComponent<DeploySettingsState> {
     var tagPrefix: String = "v"
     var useRebase: Boolean = false
     var confirmationsEnabled: Boolean = true
+    var versionCustomPath: String = ""
+    var versionCustomRegex: String = ""
+    var preferredVersionDetector: String = ""
+
 
     override fun getState(): DeploySettingsState = this
 

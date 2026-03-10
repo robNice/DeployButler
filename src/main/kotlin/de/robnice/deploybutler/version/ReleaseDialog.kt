@@ -11,12 +11,11 @@ import javax.swing.JComponent
 class ReleaseDialog(
     project: Project,
     private val currentVersion: Version,
-    private val buildGradleVersionText: String?,
+    private val detectedVersionText: String?,
     private val tagPrefix: String
 ) : DialogWrapper(project) {
 
     private var selectedType: ReleaseType = ReleaseType.NONE
-
     init {
         title = message("dialog.release.title")
         init()
@@ -24,11 +23,10 @@ class ReleaseDialog(
 
 
     override fun createCenterPanel(): JComponent {
-        val buildTagText = buildGradleVersionText?.let { "$tagPrefix$it" }
         val nextRevision = currentVersion.bump(ReleaseType.REVISION).toString()
         val nextFeature   = currentVersion.bump(ReleaseType.FEATURE).toString()
         val nextMajor     = currentVersion.bump(ReleaseType.MAJOR).toString()
-
+        val detectedTagText = detectedVersionText?.let { "$tagPrefix$it" }
         return panel {
             buttonsGroup {
                 row {
@@ -38,12 +36,11 @@ class ReleaseDialog(
                         .align(AlignX.RIGHT)
                 }
 
-                if (buildGradleVersionText != null) {
+                if (detectedVersionText != null) {
                     row {
-                        radioButton(message("dialog.release.fromBuild"), ReleaseType.FROM_BUILD_GRADLE)
+                        radioButton(message("dialog.release.fromProjectFile"), ReleaseType.FROM_PROJECT_FILE)
                             .resizableColumn()
-                        label(buildTagText ?: "")
-                            .align(AlignX.RIGHT)
+                        label(detectedTagText ?: "").align(AlignX.RIGHT)
                     }
                 }
 

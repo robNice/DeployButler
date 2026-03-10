@@ -3,6 +3,7 @@ package de.robnice.deploybutler.settings
 import com.intellij.openapi.components.service
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.ComboBox
 import com.intellij.ui.dsl.builder.panel
 import de.robnice.deploybutler.i18n.message
 import javax.swing.JCheckBox
@@ -20,6 +21,9 @@ class DeploySettingsConfigurable(
     private val prefixField = JTextField()
     private val rebaseCheckbox = JCheckBox()
     private val confirmCheckbox = JCheckBox()
+    private val preferredDetectorCombo = ComboBox(arrayOf("", "gradle", "maven", "package-json", "composer", "custom-regex"))
+    private val customPathField = JTextField()
+    private val customRegexField = JTextField()
 
     override fun createComponent(): JComponent =
         panel {
@@ -29,6 +33,16 @@ class DeploySettingsConfigurable(
             row(message("settings.prefix")) { cell(prefixField).resizableColumn() }
             row { cell(rebaseCheckbox).label(message("settings.rebase")) }
             row { cell(confirmCheckbox).label(message("settings.confirm")) }
+
+            row(message("settings.versionDetector")) {
+                cell(preferredDetectorCombo).resizableColumn()
+            }
+            row(message("settings.versionCustomPath")) {
+                cell(customPathField).resizableColumn()
+            }
+            row(message("settings.versionCustomRegex")) {
+                cell(customRegexField).resizableColumn()
+            }
         }
 
     override fun reset() {
@@ -38,6 +52,10 @@ class DeploySettingsConfigurable(
         rebaseCheckbox.isSelected = settings.useRebase
         confirmCheckbox.isSelected = settings.confirmationsEnabled
         dryRunCheckbox.isSelected = settings.dryRunEnabled
+
+        preferredDetectorCombo.selectedItem = settings.preferredVersionDetector
+        customPathField.text = settings.versionCustomPath
+        customRegexField.text = settings.versionCustomRegex
     }
 
     override fun isModified(): Boolean =
@@ -46,7 +64,10 @@ class DeploySettingsConfigurable(
                 prefixField.text.trim() != settings.tagPrefix ||
                 rebaseCheckbox.isSelected != settings.useRebase ||
                 confirmCheckbox.isSelected != settings.confirmationsEnabled ||
-                dryRunCheckbox.isSelected != settings.dryRunEnabled
+                dryRunCheckbox.isSelected != settings.dryRunEnabled ||
+                (preferredDetectorCombo.selectedItem as? String ?: "").trim() != settings.preferredVersionDetector ||
+                customPathField.text.trim() != settings.versionCustomPath ||
+                customRegexField.text.trim() != settings.versionCustomRegex
 
     override fun apply() {
         settings.targetBranch = branchField.text.trim().ifBlank { "main" }
@@ -55,6 +76,10 @@ class DeploySettingsConfigurable(
         settings.useRebase = rebaseCheckbox.isSelected
         settings.confirmationsEnabled = confirmCheckbox.isSelected
         settings.dryRunEnabled = dryRunCheckbox.isSelected
+
+        settings.preferredVersionDetector = (preferredDetectorCombo.selectedItem as? String ?: "").trim()
+        settings.versionCustomPath = customPathField.text.trim()
+        settings.versionCustomRegex = customRegexField.text
     }
 
     override fun getDisplayName(): String = message("settings.title")

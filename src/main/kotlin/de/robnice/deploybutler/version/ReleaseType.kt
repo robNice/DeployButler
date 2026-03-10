@@ -1,3 +1,3 @@
 package de.robnice.deploybutler.version
 
-enum class ReleaseType { NONE, FROM_BUILD_GRADLE, REVISION, FEATURE, MAJOR }
+enum class ReleaseType { NONE, FROM_PROJECT_FILE, REVISION, FEATURE, MAJOR }
