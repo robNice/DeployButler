@@ -254,7 +254,7 @@ Contributions are very welcome — especially for:
 - consistent terminology (e.g. “deploy”, “release”, “preview”, etc.)
 
 ---
-<!-- deploybutler-version: 7.14.23 -->
+
 ## License
 
 [`MIT`](./LICENSE)
