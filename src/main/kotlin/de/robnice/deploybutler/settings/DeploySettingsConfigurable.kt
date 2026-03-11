@@ -9,6 +9,7 @@ import de.robnice.deploybutler.i18n.message
 import javax.swing.JCheckBox
 import javax.swing.JComponent
 import javax.swing.JTextField
+import com.intellij.ui.dsl.builder.AlignY
 
 class DeploySettingsConfigurable(
     private val project: Project
@@ -47,8 +48,12 @@ class DeploySettingsConfigurable(
                 cell(customRegexField).resizableColumn()
             }
 
+            separator()
+
             row(message("settings.deployChecks")) {
-                cell(deployChecksEditor).resizableColumn()
+                cell(deployChecksEditor)
+                    .resizableColumn()
+                    .align(AlignY.TOP)
             }
         }
 
