@@ -1,16 +1,25 @@
 package de.robnice.deploybutler.settings
 
+import de.robnice.deploybutler.i18n.message
 import com.intellij.icons.AllIcons
 import com.intellij.ide.HelpTooltip
 import com.intellij.openapi.components.service
+import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.openapi.ui.TextFieldWithBrowseButton
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.JBColor
 import com.intellij.ui.dsl.builder.AlignY
 import com.intellij.ui.dsl.builder.panel
-import de.robnice.deploybutler.i18n.message
+import com.intellij.openapi.fileChooser.FileChooser
+import com.intellij.openapi.ui.TextComponentAccessor
+import com.intellij.openapi.vfs.VfsUtil
 import java.awt.Font
+import java.nio.file.Path
+import java.nio.file.Paths
 import javax.swing.JCheckBox
 import javax.swing.JComponent
 import javax.swing.JLabel
@@ -29,11 +38,15 @@ class DeploySettingsConfigurable(
     private val remoteField = JTextField()
     private val prefixField = JTextField()
     private val preferredDetectorCombo = ComboBox(arrayOf("", "gradle", "maven", "package-json", "composer", "custom-regex"))
-    private val customPathField = JTextField()
+    private val customPathField = TextFieldWithBrowseButton()
     private val customRegexField = JTextField().apply {
         columns = 40
     }
     private val deployChecksEditor = DeployChecksEditorPanel()
+
+    init {
+        setupCustomPathChooser()
+    }
 
     override fun createComponent(): JComponent =
         panel {
@@ -101,6 +114,91 @@ class DeploySettingsConfigurable(
             }
         }
 
+    private fun setupCustomPathChooser() {
+        val basePath = project.basePath ?: return
+        val baseDir = Paths.get(basePath).normalize()
+        val baseVirtualFile = LocalFileSystem.getInstance().findFileByPath(baseDir.toString()) ?: return
+
+        val descriptor = object : FileChooserDescriptor(
+            true,   // chooseFiles
+            false,  // chooseFolders
+            false,  // chooseJars
+            false,  // chooseJarsAsFiles
+            false,  // chooseJarContents
+            false   // chooseMultiple
+        ) {
+            override fun isFileSelectable(file: VirtualFile?): Boolean {
+                if (file == null || file.isDirectory) return false
+                return isInsideProject(baseDir, file)
+            }
+
+            override fun isFileVisible(file: VirtualFile, showHiddenFiles: Boolean): Boolean {
+                if (!super.isFileVisible(file, showHiddenFiles)) return false
+                return file.path == baseDir.toString() || isInsideProject(baseDir, file)
+            }
+        }
+
+        descriptor.title = message("settings.versionCustomPath")
+        descriptor.description = message("settings.help.versionCustomPath")
+        descriptor.roots = listOf(baseVirtualFile)
+
+        customPathField.textField.columns = 40
+
+        customPathField.addActionListener {
+            val currentText = customPathField.text.trim()
+
+            val initialFile = resolveInitialFile(currentText, baseDir)
+                ?: baseVirtualFile
+
+            val selected = FileChooser.chooseFile(descriptor, project, initialFile)
+                ?: return@addActionListener
+
+            customPathField.text = baseDir
+                .relativize(Paths.get(selected.path).normalize())
+                .toString()
+                .replace('\\', '/')
+        }
+    }
+
+    private fun resolveInitialFile(rawText: String, baseDir: Path): VirtualFile? {
+        if (rawText.isBlank()) return null
+
+        val path = runCatching {
+            val input = Paths.get(rawText)
+            val absolute = if (input.isAbsolute) input.normalize() else baseDir.resolve(input).normalize()
+            if (!absolute.startsWith(baseDir)) return null
+            LocalFileSystem.getInstance().findFileByPath(absolute.toString())
+        }.getOrNull()
+
+        return path
+    }
+
+    private fun isInsideProject(baseDir: Path, file: VirtualFile): Boolean =
+        runCatching {
+            Paths.get(file.path).normalize().startsWith(baseDir)
+        }.getOrDefault(false)
+
+    private fun toRelativeProjectPath(rawPath: String): String {
+        val trimmed = rawPath.trim()
+        if (trimmed.isBlank()) return ""
+
+        val basePath = project.basePath ?: return trimmed
+        val baseDir = Paths.get(basePath).normalize()
+        val inputPath = Paths.get(trimmed)
+
+        val absolutePath = if (inputPath.isAbsolute) {
+            inputPath.normalize()
+        } else {
+            baseDir.resolve(inputPath).normalize()
+        }
+
+        require(absolutePath.startsWith(baseDir)) {
+            "Selected file must be inside the project directory."
+        }
+
+        return baseDir.relativize(absolutePath).toString().replace('\\', '/')
+    }
+
     private fun com.intellij.ui.dsl.builder.Panel.helpRow(messageKey: String) {
         row {
             label(message(messageKey))
@@ -156,7 +254,7 @@ class DeploySettingsConfigurable(
         settings.dryRunEnabled = dryRunCheckbox.isSelected
 
         settings.preferredVersionDetector = (preferredDetectorCombo.selectedItem as? String ?: "").trim()
-        settings.versionCustomPath = customPathField.text.trim()
+        settings.versionCustomPath = toRelativeProjectPath(customPathField.text)
         settings.versionCustomRegex = customRegexField.text
         settings.deployChecks = deployChecksEditor.getChecks()
     }
