@@ -148,6 +148,8 @@ Das ist hilfreich, wenn du zwar geführt arbeiten willst, aber vor dem „Point 
 ---
 ### Deploy-Checks
 
+![deploy checks](docs/assets/checks.png)
+
 Wenn für das aktuelle Projekt **Deploy-Checks** konfiguriert sind, erscheint vor dem eigentlichen Deploy ein zusätzlicher Bestätigungsdialog.
 
 Sind keine Checks hinterlegt, wird dieser Schritt übersprungen und es erscheint kein zusätzlicher Check-Dialog.

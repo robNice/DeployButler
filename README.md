@@ -151,6 +151,8 @@ This is helpful if you want a guided flow, but still want to consciously confirm
 ---
 ### Deploy Checks
 
+![deploy checks](docs/assets/checks.png)
+
 If **Deploy Checks** are configured for the current project, an additional confirmation dialog appears before the actual deploy starts.
 
 If no checks have been configured, this step is skipped and no additional check dialog is shown.
