@@ -50,7 +50,10 @@ class DeploySettingsConfigurable(
 
             separator()
 
-            row(message("settings.deployChecks")) {
+            row {
+                label(message("settings.deployChecks"))
+                    .align(AlignY.TOP)
+
                 cell(deployChecksEditor)
                     .resizableColumn()
                     .align(AlignY.TOP)
