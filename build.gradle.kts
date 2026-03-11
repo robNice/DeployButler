@@ -39,7 +39,8 @@ intellijPlatform {
         changeNotes = """
           <h2>New</h2>
   <ul>
-    <li>Nicer bowtie action button for the toolbar</li>
+    <li>Update deploy icon designs</li>
+    <li>Refine GradleVersionDetector to handle versionName and version assignments separately</li>
   </ul>
 
 
