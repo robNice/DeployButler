@@ -18,6 +18,7 @@ import git4idea.commands.GitLineHandler
 import git4idea.repo.GitRepository
 import java.io.File
 import java.util.concurrent.atomic.AtomicReference
+import com.intellij.openapi.progress.ProcessCanceledException
 
 class DeployService(
     private val project: Project,
@@ -85,7 +86,6 @@ class DeployService(
         }
 
         try {
-            // PLAN (no checkout/merge/push yet)
             runOrThrow(GitLineHandler(project, repo.root, GitCommand.FETCH).apply { addParameters(remote) })
             runOrThrow(GitLineHandler(project, repo.root, GitCommand.FETCH).apply { addParameters("--tags") })
 
@@ -113,7 +113,6 @@ class DeployService(
 
             val newTag: String? = when (releaseType) {
                 ReleaseType.NONE -> null
-
                 ReleaseType.FROM_PROJECT_FILE -> {
                     val v = detectedVersionText ?: run {
                         DeployNotifications.error(project, message("deploy.buildVersionMissing"))
@@ -125,9 +124,23 @@ class DeployService(
                     }
                     versionService.buildTag(semver)
                 }
-
                 ReleaseType.REVISION, ReleaseType.FEATURE, ReleaseType.MAJOR ->
                     versionService.buildTag(currentVersion.bump(releaseType))
+            }
+
+            val deployChecks = settings.deployChecks
+                .map { it.trim() }
+                .filter { it.isNotBlank() }
+
+            if (deployChecks.isNotEmpty()) {
+                val proceedChecks = AtomicReference(false)
+                ApplicationManager.getApplication().invokeAndWait {
+                    proceedChecks.set(DeployChecksDialog(project, deployChecks).showAndGet())
+                }
+                if (!proceedChecks.get()) {
+                    DeployNotifications.info(project, message("deploy.checks.cancelled"))
+                    return
+                }
             }
 
             val preview = DeployPreviewBuilder.build(
@@ -156,7 +169,6 @@ class DeployService(
                 }
             }
 
-            // EXECUTE
             runOrThrow(GitLineHandler(project, repo.root, GitCommand.CHECKOUT).apply { addParameters(targetBranch) })
 
             if (settings.useRebase) {
@@ -175,6 +187,8 @@ class DeployService(
             }
 
             DeployNotifications.info(project, message("deploy.success", newTag ?: "(no tag)"))
+        } catch (e: ProcessCanceledException) {
+            throw e
         } catch (e: Exception) {
             DeployNotifications.error(project, message("deploy.gitFailed", e.message ?: ""))
         } finally {

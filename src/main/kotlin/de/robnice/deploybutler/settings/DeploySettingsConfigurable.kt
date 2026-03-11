@@ -23,7 +23,10 @@ class DeploySettingsConfigurable(
     private val confirmCheckbox = JCheckBox()
     private val preferredDetectorCombo = ComboBox(arrayOf("", "gradle", "maven", "package-json", "composer", "custom-regex"))
     private val customPathField = JTextField()
-    private val customRegexField = JTextField()
+    private val customRegexField = JTextField().apply {
+        columns = 40
+    }
+    private val deployChecksEditor = DeployChecksEditorPanel()
 
     override fun createComponent(): JComponent =
         panel {
@@ -43,6 +46,10 @@ class DeploySettingsConfigurable(
             row(message("settings.versionCustomRegex")) {
                 cell(customRegexField).resizableColumn()
             }
+
+            row(message("settings.deployChecks")) {
+                cell(deployChecksEditor).resizableColumn()
+            }
         }
 
     override fun reset() {
@@ -56,6 +63,7 @@ class DeploySettingsConfigurable(
         preferredDetectorCombo.selectedItem = settings.preferredVersionDetector
         customPathField.text = settings.versionCustomPath
         customRegexField.text = settings.versionCustomRegex
+        deployChecksEditor.setChecks(settings.deployChecks)
     }
 
     override fun isModified(): Boolean =
@@ -67,7 +75,8 @@ class DeploySettingsConfigurable(
                 dryRunCheckbox.isSelected != settings.dryRunEnabled ||
                 (preferredDetectorCombo.selectedItem as? String ?: "").trim() != settings.preferredVersionDetector ||
                 customPathField.text.trim() != settings.versionCustomPath ||
-                customRegexField.text.trim() != settings.versionCustomRegex
+                customRegexField.text.trim() != settings.versionCustomRegex ||
+                deployChecksEditor.getChecks() != settings.deployChecks
 
     override fun apply() {
         settings.targetBranch = branchField.text.trim().ifBlank { "main" }
@@ -80,6 +89,7 @@ class DeploySettingsConfigurable(
         settings.preferredVersionDetector = (preferredDetectorCombo.selectedItem as? String ?: "").trim()
         settings.versionCustomPath = customPathField.text.trim()
         settings.versionCustomRegex = customRegexField.text
+        settings.deployChecks = deployChecksEditor.getChecks()
     }
 
     override fun getDisplayName(): String = message("settings.title")

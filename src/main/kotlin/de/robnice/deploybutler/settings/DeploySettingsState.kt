@@ -17,7 +17,7 @@ class DeploySettingsState : PersistentStateComponent<DeploySettingsState> {
     var versionCustomPath: String = ""
     var versionCustomRegex: String = ""
     var preferredVersionDetector: String = ""
-
+    var deployChecks: MutableList<String> = mutableListOf()
 
     override fun getState(): DeploySettingsState = this
 
