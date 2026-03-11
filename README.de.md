@@ -14,6 +14,7 @@ DeployButler ist ein JetBrains-IDE-Plugin, das dich beim „Deploy per Git“ un
       - [Wann die automatische Erkennung nicht greift](#wann-die-automatische-erkennung-nicht-greift)
     - [Vorschau-Mode (Dry Run)](#vorschau-mode-dry-run)
     - [Bestätigung vor Deploy](#bestaetigung-vor-deploy)
+    - [Deploy-Checks](#deploy-checks)
     - [Rebase statt Merge](#rebase-statt-merge)
 - [Einstellungen](#einstellungen)
 - [Übersetzungen](#uebersetzungen)
@@ -145,6 +146,31 @@ Wenn **Bestätigung vor Deploy** aktiv ist, zeigt DeployButler vor dem Ausführe
 Das ist hilfreich, wenn du zwar geführt arbeiten willst, aber vor dem „Point of no return“ nochmal bewusst zustimmen möchtest.
 
 ---
+### Deploy-Checks
+
+Wenn für das aktuelle Projekt **Deploy-Checks** konfiguriert sind, erscheint vor dem eigentlichen Deploy ein zusätzlicher Bestätigungsdialog.
+
+Sind keine Checks hinterlegt, wird dieser Schritt übersprungen und es erscheint kein zusätzlicher Check-Dialog.
+
+Darin werden alle hinterlegten Prüfungen als einzelne Checkboxen angezeigt, zum Beispiel:
+
+- Changelog aktuell?
+- Tickets geprüft?
+- Migration bedacht?
+- Dokumentation angepasst?
+
+Der Deploy kann erst fortgesetzt werden, wenn **alle Checks manuell bestätigt** wurden.
+
+Das ist nützlich, wenn du vor einem Release wiederkehrende inhaltliche Punkte absichern willst, die Git selbst nicht prüfen kann, zum Beispiel:
+
+- ob der Changelog aktualisiert wurde,
+- ob bestimmte manuelle Tests durchgeführt wurden,
+- ob begleitende Dokumentation angepasst wurde,
+- oder ob projektspezifische Freigaben vorliegen.
+
+Deploy-Checks sind bewusst als zusätzlicher Pflichtschritt gedacht und helfen dabei, Releases nicht nur technisch, sondern auch organisatorisch sauber durchzuführen.
+
+---
 
 ### Rebase statt Merge
 
@@ -179,6 +205,11 @@ DeployButler bietet Settings, um den Ablauf an dein Projekt und deinen Release-P
 
 - **Bestätigung vor Deploy (Vorschau-Dialog)**  
   Zeigt vor der Ausführung eine Vorschau an und fragt nach einer Bestätigung.
+
+- **Deploy-Checks**  
+  Hier können pro Projekt beliebig viele manuelle Prüfungen hinterlegt werden, die vor einem Deploy bestätigt werden müssen.  
+  Jeder Check besteht aus einem frei formulierbaren Text, zum Beispiel `Changelog aktuell?` oder `Dokumentation angepasst?`.  
+  Die Einträge lassen sich direkt in den Einstellungen hinzufügen, entfernen und in ihrer Reihenfolge anpassen.
 
 - **Bevorzugter Version-Detektor**  
   Legt fest, welche Versionsquelle bei der automatischen Projektversions-Erkennung bevorzugt geprüft werden soll.  
