@@ -14,6 +14,7 @@ DeployButler is a JetBrains IDE plugin that supports you with “deploy via Git�
       - [When Automatic Detection May Not Work](#when-automatic-detection-may-not-work) 
     - [Preview mode (dry run)](#preview-mode-dry-run)
     - [Confirmation before deploy](#confirmation-before-deploy)
+    - [Deploy-Checks](#deploy-checks)
     - [Rebase instead of merge](#rebase-instead-of-merge)
 - [Settings](#settings)
 - [Translations](#translations)
@@ -148,6 +149,31 @@ If **confirmation before deploy** is enabled, DeployButler shows a preview befor
 This is helpful if you want a guided flow, but still want to consciously confirm before the “point of no return”.
 
 ---
+### Deploy Checks
+
+If **Deploy Checks** are configured for the current project, an additional confirmation dialog appears before the actual deploy starts.
+
+If no checks have been configured, this step is skipped and no additional check dialog is shown.
+
+The dialog displays all configured checks as individual checkboxes, for example:
+
+- Is the changelog up to date?
+- Have the tickets been reviewed?
+- Have migrations been considered?
+- Has the documentation been updated?
+
+The deploy can only continue once **all checks have been confirmed manually**.
+
+This is useful when you want to enforce recurring release-related checks that Git itself cannot verify, for example:
+
+- whether the changelog has been updated,
+- whether certain manual tests have been completed,
+- whether accompanying documentation has been adjusted,
+- or whether project-specific approvals are in place.
+
+Deploy Checks are intended as an additional mandatory step and help ensure that releases are not only technically correct, but also organizationally complete.
+
+---
 
 ### Rebase instead of merge
 
@@ -182,6 +208,11 @@ DeployButler provides settings to adapt the workflow to your project and release
 
 - **Confirm before deploy (preview dialog)**  
   Shows a preview before execution and asks for confirmation.
+
+- **Deploy Checks**  
+  Here you can define any number of manual checks per project that must be confirmed before a deploy can continue.  
+  Each check consists of a freely defined text, for example `Is the changelog up to date?` or `Has the documentation been updated?`.  
+  Checks can be added, removed, and reordered directly in the settings.
 
 - **Preferred version detector**  
   Lets you prefer one version source over the others when automatic project version detection is used.  
