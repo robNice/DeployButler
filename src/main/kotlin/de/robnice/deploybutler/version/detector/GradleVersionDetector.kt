@@ -7,9 +7,8 @@ class GradleVersionDetector : VersionDetector {
 
     override val id: String = "gradle"
 
-    private val versionRegex = Regex(
-        """\b(?:versionName|version)\s*(?:=)?\s*["']([^"']+)["']"""
-    )
+    private val versionNameRegex = Regex("""\bversionName\s*(?:=)?\s*["']([^"']+)["']""")
+    private val versionAssignRegex = Regex("""(?m)^\s*version\s*=\s*["']([^"']+)["']""")
 
     override fun detect(repoRoot: File, settings: DeploySettingsState): String? {
         val candidates = buildList {
@@ -30,7 +29,10 @@ class GradleVersionDetector : VersionDetector {
 
     private fun extractVersion(file: File): String? {
         if (!file.isFile) return null
+
         val text = runCatching { file.readText(Charsets.UTF_8) }.getOrNull() ?: return null
-        return versionRegex.find(text)?.groupValues?.getOrNull(1)?.trim()?.takeIf { it.isNotBlank() }
+
+        return versionNameRegex.find(text)?.groupValues?.getOrNull(1)?.trim()?.takeIf { it.isNotBlank() }
+            ?: versionAssignRegex.find(text)?.groupValues?.getOrNull(1)?.trim()?.takeIf { it.isNotBlank() }
     }
 }
