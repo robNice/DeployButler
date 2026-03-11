@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "de.robnice"
-version = "1.0.6"
+version = "1.1.0"
 
 repositories {
     mavenCentral()
@@ -38,10 +38,13 @@ intellijPlatform {
 
         changeNotes = """
           <h2>New</h2>
-  <ul>
-    <li>Update deploy icon designs</li>
-    <li>Refine GradleVersionDetector to handle versionName and version assignments separately</li>
-  </ul>
+            <ul>
+              <li>You can now define project-specific deploy checks in the settings.</li>
+              <li>Deploys are now blocked until all required checks have been manually confirmed.</li>
+              <li>Deploy checks can be added, removed, and reordered directly in the settings.</li>
+              <li>A dedicated confirmation dialog now appears before deploy execution when checks are configured.</li>
+              <li>The settings layout for custom version regex and deploy checks has been improved.</li>
+            </ul>
 
 
         """.trimIndent()
