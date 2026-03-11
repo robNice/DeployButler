@@ -12,9 +12,9 @@ DeployButler is a JetBrains IDE plugin that supports you with “deploy via Git�
     - [Version tagging (release type)](#version-tagging-release-type)
       - [Automatic Project Version Detection](#automatic-project-version-detection)
       - [When Automatic Detection May Not Work](#when-automatic-detection-may-not-work) 
-    - [Preview mode (dry run)](#preview-mode-dry-run)
-    - [Confirmation before deploy](#confirmation-before-deploy)
     - [Deploy-Checks](#deploy-checks)
+    - [Confirmation before deploy](#confirmation-before-deploy)
+    - [Preview mode (dry run)](#preview-mode-dry-run)
     - [Rebase instead of merge](#rebase-instead-of-merge)
 - [Settings](#settings)
 - [Translations](#translations)
@@ -127,28 +127,6 @@ In those cases, you can still use one of the three normal release types, or conf
 > - If no version can be detected automatically, that does not necessarily mean the project has no version, only that it is not stored in a directly readable form.
 
 ---
-
-### Preview mode (dry run)
-
-In **dry run**, the flow is executed in a way that no permanent changes are made.
-
-This is ideal if you want to:
-
-- first check that everything is configured correctly,
-- understand the planned flow,
-- or see in advance which steps/changes are coming.
-
----
-
-### Confirmation before deploy
-
-If **confirmation before deploy** is enabled, DeployButler shows a preview before execution and explicitly asks whether it should proceed.
-
-![Preview](docs/assets/preview.png)
-
-This is helpful if you want a guided flow, but still want to consciously confirm before the “point of no return”.
-
----
 ### Deploy Checks
 
 ![deploy checks](docs/assets/checks.png)
@@ -174,6 +152,28 @@ This is useful when you want to enforce recurring release-related checks that Gi
 - or whether project-specific approvals are in place.
 
 Deploy Checks are intended as an additional mandatory step and help ensure that releases are not only technically correct, but also organizationally complete.
+
+---
+
+### Confirmation before deploy
+
+If **confirmation before deploy** is enabled, DeployButler shows a preview before execution and explicitly asks whether it should proceed.
+
+![Preview](docs/assets/preview.png)
+
+This is helpful if you want a guided flow, but still want to consciously confirm before the “point of no return”.
+
+---
+
+### Preview mode (dry run)
+
+In **dry run**, the flow is executed in a way that no permanent changes are made.
+
+This is ideal if you want to:
+
+- first check that everything is configured correctly,
+- understand the planned flow,
+- or see in advance which steps/changes are coming.
 
 ---
 

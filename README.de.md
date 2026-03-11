@@ -12,9 +12,9 @@ DeployButler ist ein JetBrains-IDE-Plugin, das dich beim „Deploy per Git“ un
     - [Versions-Tagging (Release-Typ)](#versions-tagging---release-typ)
       - [Automatische Ermittlung der Projektversion](#automatische-ermittlung-der-projektversion)
       - [Wann die automatische Erkennung nicht greift](#wann-die-automatische-erkennung-nicht-greift)
-    - [Vorschau-Mode (Dry Run)](#vorschau-mode-dry-run)
-    - [Bestätigung vor Deploy](#bestaetigung-vor-deploy)
     - [Deploy-Checks](#deploy-checks)
+    - [Bestätigung vor Deploy](#bestaetigung-vor-deploy)
+    - [Vorschau-Mode (Dry Run)](#vorschau-mode-dry-run)
     - [Rebase statt Merge](#rebase-statt-merge)
 - [Einstellungen](#einstellungen)
 - [Übersetzungen](#uebersetzungen)
@@ -124,28 +124,6 @@ In solchen Fällen kann weiterhin ganz normal einer der drei Release-Typen gewä
 > - Wenn eine Version nicht automatisch erkannt wird, bedeutet das nicht zwingend, dass das Projekt keine Version hat. Sie steht dann nur nicht in einer direkt auswertbaren Form vor.
 
 ---
-
-### Vorschau-Mode (Dry Run)
-
-Im **Dry Run** wird der Ablauf so ausgeführt, dass keine dauerhaften Änderungen entstehen.
-
-Das ist ideal, wenn du:
-
-- erst prüfen willst, ob alles korrekt konfiguriert ist,
-- den geplanten Ablauf nachvollziehen willst,
-- oder dir vorab anzeigen lassen möchtest, welche Schritte/Änderungen anstehen.
-
----
-
-### Bestaetigung vor Deploy
-
-Wenn **Bestätigung vor Deploy** aktiv ist, zeigt DeployButler vor dem Ausführen eine Vorschau an und fragt aktiv nach, ob fortgefahren werden soll.
-
-![Vorschau](docs/assets/preview.png)
-
-Das ist hilfreich, wenn du zwar geführt arbeiten willst, aber vor dem „Point of no return“ nochmal bewusst zustimmen möchtest.
-
----
 ### Deploy-Checks
 
 ![deploy checks](docs/assets/checks.png)
@@ -171,6 +149,28 @@ Das ist nützlich, wenn du vor einem Release wiederkehrende inhaltliche Punkte a
 - oder ob projektspezifische Freigaben vorliegen.
 
 Deploy-Checks sind bewusst als zusätzlicher Pflichtschritt gedacht und helfen dabei, Releases nicht nur technisch, sondern auch organisatorisch sauber durchzuführen.
+
+---
+
+### Bestaetigung vor Deploy
+
+Wenn **Bestätigung vor Deploy** aktiv ist, zeigt DeployButler vor dem Ausführen eine Vorschau an und fragt aktiv nach, ob fortgefahren werden soll.
+
+![Vorschau](docs/assets/preview.png)
+
+Das ist hilfreich, wenn du zwar geführt arbeiten willst, aber vor dem „Point of no return“ nochmal bewusst zustimmen möchtest.
+
+---
+
+### Vorschau-Mode (Dry Run)
+
+Im **Dry Run** wird der Ablauf so ausgeführt, dass keine dauerhaften Änderungen entstehen.
+
+Das ist ideal, wenn du:
+
+- erst prüfen willst, ob alles korrekt konfiguriert ist,
+- den geplanten Ablauf nachvollziehen willst,
+- oder dir vorab anzeigen lassen möchtest, welche Schritte/Änderungen anstehen.
 
 ---
 
