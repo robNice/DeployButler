@@ -9,19 +9,30 @@ import javax.swing.BoxLayout
 import javax.swing.JButton
 import javax.swing.JPanel
 import javax.swing.JTextField
+import javax.swing.KeyStroke
 
 class DeployChecksEditorPanel : JPanel(BorderLayout()) {
+
+    private val inputField = JTextField()
 
     private val rowsPanel = JPanel().apply {
         layout = BoxLayout(this, BoxLayout.Y_AXIS)
     }
 
     init {
-        val controls = JPanel(FlowLayout(FlowLayout.LEFT, 0, 0)).apply {
-            add(JButton("+").apply {
-                toolTipText = "Add check"
-                addActionListener { addRow("") }
-            })
+        val addButton = JButton("+").apply {
+            toolTipText = "Add check"
+            addActionListener { addFromInput() }
+        }
+
+        inputField.apply {
+            columns = 30
+            addActionListener { addFromInput() }
+        }
+
+        val controls = JPanel(BorderLayout(8, 0)).apply {
+            add(inputField, BorderLayout.CENTER)
+            add(addButton, BorderLayout.EAST)
         }
 
         add(controls, BorderLayout.NORTH)
@@ -32,11 +43,10 @@ class DeployChecksEditorPanel : JPanel(BorderLayout()) {
 
     fun setChecks(checks: List<String>) {
         rowsPanel.removeAll()
-        if (checks.isEmpty()) {
-            addRow("")
-        } else {
-            checks.forEach { addRow(it) }
-        }
+        checks
+            .map { it.trim() }
+            .filter { it.isNotBlank() }
+            .forEach { addRow(it) }
         refreshUi()
     }
 
@@ -47,6 +57,18 @@ class DeployChecksEditorPanel : JPanel(BorderLayout()) {
             .filter { it.isNotBlank() }
             .toMutableList()
 
+    private fun addFromInput() {
+        val value = inputField.text.trim()
+        if (value.isBlank()) {
+            inputField.requestFocusInWindow()
+            return
+        }
+
+        addRow(value)
+        inputField.text = ""
+        inputField.requestFocusInWindow()
+    }
+
     private fun addRow(value: String) {
         rowsPanel.add(CheckRowPanel(value))
         refreshUi()
@@ -54,9 +76,6 @@ class DeployChecksEditorPanel : JPanel(BorderLayout()) {
 
     private fun removeRow(row: CheckRowPanel) {
         rowsPanel.remove(row)
-        if (rowsPanel.componentCount == 0) {
-            addRow("")
-        }
         refreshUi()
     }
 
@@ -108,6 +127,8 @@ class DeployChecksEditorPanel : JPanel(BorderLayout()) {
             add(buttons, BorderLayout.EAST)
             add(Box.createVerticalStrut(4), BorderLayout.SOUTH)
             maximumSize = Dimension(Int.MAX_VALUE, preferredSize.height)
+
+            textField.inputMap.put(KeyStroke.getKeyStroke("ENTER"), "none")
         }
 
         fun getValue(): String = textField.text
