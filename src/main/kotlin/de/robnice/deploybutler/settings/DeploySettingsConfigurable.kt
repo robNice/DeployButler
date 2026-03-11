@@ -1,27 +1,33 @@
 package de.robnice.deploybutler.settings
 
+import com.intellij.icons.AllIcons
+import com.intellij.ide.HelpTooltip
 import com.intellij.openapi.components.service
 import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
+import com.intellij.ui.JBColor
+import com.intellij.ui.dsl.builder.AlignY
 import com.intellij.ui.dsl.builder.panel
 import de.robnice.deploybutler.i18n.message
+import java.awt.Font
 import javax.swing.JCheckBox
 import javax.swing.JComponent
+import javax.swing.JLabel
 import javax.swing.JTextField
-import com.intellij.ui.dsl.builder.AlignY
+import javax.swing.UIManager
 
 class DeploySettingsConfigurable(
     private val project: Project
 ) : Configurable {
 
     private val settings = project.service<DeploySettingsState>()
-    private val dryRunCheckbox = JCheckBox()
+    private val dryRunCheckbox = JCheckBox(message("settings.dryRun"))
+    private val rebaseCheckbox = JCheckBox(message("settings.rebase"))
+    private val confirmCheckbox = JCheckBox(message("settings.confirm"))
     private val branchField = JTextField()
     private val remoteField = JTextField()
     private val prefixField = JTextField()
-    private val rebaseCheckbox = JCheckBox()
-    private val confirmCheckbox = JCheckBox()
     private val preferredDetectorCombo = ComboBox(arrayOf("", "gradle", "maven", "package-json", "composer", "custom-regex"))
     private val customPathField = JTextField()
     private val customRegexField = JTextField().apply {
@@ -31,33 +37,88 @@ class DeploySettingsConfigurable(
 
     override fun createComponent(): JComponent =
         panel {
-            row { cell(dryRunCheckbox).label(message("settings.dryRun")) }
-            row(message("settings.branch")) { cell(branchField).resizableColumn() }
-            row(message("settings.remote")) { cell(remoteField).resizableColumn() }
-            row(message("settings.prefix")) { cell(prefixField).resizableColumn() }
-            row { cell(rebaseCheckbox).label(message("settings.rebase")) }
-            row { cell(confirmCheckbox).label(message("settings.confirm")) }
+            group(message("settings.section.general")) {
+                row {
+                    cell(dryRunCheckbox)
+                }
+                helpRow("settings.help.dryRun")
 
-            row(message("settings.versionDetector")) {
-                cell(preferredDetectorCombo).resizableColumn()
-            }
-            row(message("settings.versionCustomPath")) {
-                cell(customPathField).resizableColumn()
-            }
-            row(message("settings.versionCustomRegex")) {
-                cell(customRegexField).resizableColumn()
+                row(message("settings.branch")) {
+                    cell(branchField).resizableColumn()
+                }
+                helpRow("settings.help.branch")
+
+                row(message("settings.remote")) {
+                    cell(remoteField).resizableColumn()
+                }
+                helpRow("settings.help.remote")
+
+                row(message("settings.prefix")) {
+                    cell(prefixField).resizableColumn()
+                }
+                helpRow("settings.help.prefix")
+
+                row {
+                    cell(rebaseCheckbox)
+                }
+                helpRow("settings.help.rebase")
+
+                row {
+                    cell(confirmCheckbox)
+                }
+                helpRow("settings.help.confirm")
             }
 
-            separator()
+            group(message("settings.section.versionDetection")) {
+                row(message("settings.versionDetector")) {
+                    cell(preferredDetectorCombo).resizableColumn()
+                }
+                helpRow("settings.help.versionDetector")
 
-            row {
-                label(message("settings.deployChecks"))
-                    .align(AlignY.TOP)
+                row(message("settings.versionCustomPath")) {
+                    cell(customPathField).resizableColumn()
+                }
+                helpRow("settings.help.versionCustomPath")
 
-                cell(deployChecksEditor)
-                    .resizableColumn()
-                    .align(AlignY.TOP)
+                row(message("settings.versionCustomRegex")) {
+                    cell(customRegexField).resizableColumn()
+                }
+                helpRow("settings.help.versionCustomRegex")
             }
+
+            group(message("settings.section.deployChecks")) {
+                row {
+                    label(message("settings.deployChecks"))
+                        .align(AlignY.TOP)
+
+                    cell(deployChecksEditor)
+                        .resizableColumn()
+                        .align(AlignY.TOP)
+
+                    cell(helpIcon("settings.help.deployChecks"))
+                        .align(AlignY.TOP)
+                }
+            }
+        }
+
+    private fun com.intellij.ui.dsl.builder.Panel.helpRow(messageKey: String) {
+        row {
+            label(message(messageKey))
+                .applyToComponent {
+                    foreground = UIManager.getColor("ContextHelp.FOREGROUND")
+                        ?: UIManager.getColor("Label.disabledForeground")
+                                ?: JBColor.GRAY
+
+                    font = font.deriveFont(Font.PLAIN, font.size2D - 1f)
+                }
+        }
+    }
+
+    private fun helpIcon(messageKey: String): JLabel =
+        JLabel(AllIcons.General.ContextHelp).apply {
+            HelpTooltip()
+                .setDescription(message(messageKey))
+                .installOn(this)
         }
 
     override fun reset() {
