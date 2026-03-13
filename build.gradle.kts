@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "de.robnice"
-version = "1.1.1"
+version = "1.2.0"
 
 repositories {
     mavenCentral()
@@ -41,7 +41,8 @@ intellijPlatform {
             <ul>
               <li>Cleaned up settings page.</li>
               <li>Custom version file path now uses a project-scoped file picker that opens in the project directory and stores the selected file as a relative path.</li>
-              <li>Fixed translation encodings.</li>
+              <li>Expanded package.json version detection to also check common app folders and monorepo locations such as app, frontend, apps/*, packages/*, and services/*.</li>
+              <li>Reworked translations for better consistency and wording.</li>
             </ul>
 
 
