@@ -119,24 +119,14 @@ class DeploySettingsConfigurable(
         val baseDir = Paths.get(basePath).normalize()
         val baseVirtualFile = LocalFileSystem.getInstance().findFileByPath(baseDir.toString()) ?: return
 
-        val descriptor = object : FileChooserDescriptor(
+        val descriptor = FileChooserDescriptor(
             true,   // chooseFiles
             false,  // chooseFolders
             false,  // chooseJars
             false,  // chooseJarsAsFiles
             false,  // chooseJarContents
             false   // chooseMultiple
-        ) {
-            override fun isFileSelectable(file: VirtualFile?): Boolean {
-                if (file == null || file.isDirectory) return false
-                return isInsideProject(baseDir, file)
-            }
-
-            override fun isFileVisible(file: VirtualFile, showHiddenFiles: Boolean): Boolean {
-                if (!super.isFileVisible(file, showHiddenFiles)) return false
-                return file.path == baseDir.toString() || isInsideProject(baseDir, file)
-            }
-        }
+        )
 
         descriptor.title = message("settings.versionCustomPath")
         descriptor.description = message("settings.help.versionCustomPath")
@@ -152,9 +142,11 @@ class DeploySettingsConfigurable(
 
             val selected = FileChooser.chooseFile(descriptor, project, initialFile)
                 ?: return@addActionListener
+            val selectedPath = Paths.get(selected.path).normalize()
+            if (!selectedPath.startsWith(baseDir)) return@addActionListener
 
             customPathField.text = baseDir
-                .relativize(Paths.get(selected.path).normalize())
+                .relativize(selectedPath)
                 .toString()
                 .replace('\\', '/')
         }
@@ -172,11 +164,6 @@ class DeploySettingsConfigurable(
 
         return path
     }
-
-    private fun isInsideProject(baseDir: Path, file: VirtualFile): Boolean =
-        runCatching {
-            Paths.get(file.path).normalize().startsWith(baseDir)
-        }.getOrDefault(false)
 
     private fun toRelativeProjectPath(rawPath: String): String {
         val trimmed = rawPath.trim()

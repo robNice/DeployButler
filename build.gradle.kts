@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "de.robnice"
-version = "1.1.3"
+version = "1.1.4"
 
 repositories {
     mavenCentral()
@@ -16,8 +16,8 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        // Base IDE for development (works for ALL JetBrains IDEs)
-        intellijIdea("2025.2.4")
+        // Build against IntelliJ IDEA Community; the plugin itself additionally requires Git4Idea.
+        intellijIdeaCommunity("2025.2.4")
 
         // Git support
         bundledPlugin("Git4Idea")
