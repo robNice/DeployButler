@@ -8,7 +8,6 @@ import com.intellij.ui.dsl.builder.bind
 import com.intellij.ui.dsl.builder.panel
 import de.robnice.deploybutler.i18n.message
 import javax.swing.JComponent
-import javax.swing.JSeparator
 import javax.swing.JTextField
 
 class ReleaseDialog(
@@ -44,7 +43,9 @@ class ReleaseDialog(
                 }
 
                 row {
-                    cell(JSeparator()).resizableColumn()
+                    label("-------------------------")
+                        .resizableColumn()
+                        .align(AlignX.RIGHT)
                 }
 
                 if (detectedVersionText != null) {
@@ -72,7 +73,9 @@ class ReleaseDialog(
                 }
 
                 row {
-                    cell(JSeparator()).resizableColumn()
+                    label("-------------------------")
+                        .resizableColumn()
+                        .align(AlignX.RIGHT)
                 }
 
                 if (configuredFixedTag != null) {
@@ -85,7 +88,8 @@ class ReleaseDialog(
 
                 row {
                     radioButton(message("dialog.release.customTag"), ReleaseType.CUSTOM)
-                    cell(customTagField).resizableColumn()
+                        .resizableColumn()
+                    cell(customTagField).align(AlignX.RIGHT)
                 }
             }.bind({ selectedType }, { selectedType = it })
         }
