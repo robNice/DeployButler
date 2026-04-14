@@ -12,6 +12,7 @@ class DeploySettingsState : PersistentStateComponent<DeploySettingsState> {
     var targetBranch: String = "main"
     var remoteName: String = "origin"
     var tagPrefix: String = "v"
+    var fixedTag: String = ""
     var useRebase: Boolean = false
     var confirmationsEnabled: Boolean = true
     var versionCustomPath: String = ""

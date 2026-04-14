@@ -59,6 +59,34 @@ class DeployService(
         return Version(m.groupValues[1].toInt(), m.groupValues[2].toInt(), m.groupValues[3].toInt())
     }
 
+    private fun tagExistsLocally(repo: GitRepository, tag: String): Boolean {
+        val result = runOrThrow(GitLineHandler(project, repo.root, GitCommand.TAG).apply {
+            addParameters("-l", tag)
+        })
+        return result.output.any { it.trim() == tag }
+    }
+
+    private fun tagExistsOnRemote(repo: GitRepository, remote: String, tag: String): Boolean {
+        val result = runOrThrow(GitLineHandler(project, repo.root, GitCommand.LS_REMOTE).apply {
+            addParameters("--tags", remote, "refs/tags/$tag")
+        })
+        return result.output.any { it.contains("refs/tags/$tag") }
+    }
+
+    private fun deleteTagIfExists(repo: GitRepository, remote: String, tag: String) {
+        if (tagExistsLocally(repo, tag)) {
+            runOrThrow(GitLineHandler(project, repo.root, GitCommand.TAG).apply {
+                addParameters("-d", tag)
+            })
+        }
+
+        if (tagExistsOnRemote(repo, remote, tag)) {
+            runOrThrow(GitLineHandler(project, repo.root, GitCommand.PUSH).apply {
+                addParameters(remote, ":refs/tags/$tag")
+            })
+        }
+    }
+
     fun run() {
         val repo = repoForProjectBase() ?: run {
             DeployNotifications.error(project, message("deploy.noRepo"))
@@ -95,13 +123,23 @@ class DeployService(
             val detectedVersionText = versionDetectionService.detect(File(repo.root.path))
 
             val releaseTypeHolder = AtomicReference<ReleaseType?>(null)
+            val selectedCustomTagHolder = AtomicReference("")
             val okHolder = AtomicReference(false)
 
             ApplicationManager.getApplication().invokeAndWait {
-                val dialog = ReleaseDialog(project, currentVersion, detectedVersionText, settings.tagPrefix)
+                val dialog = ReleaseDialog(
+                    project,
+                    currentVersion,
+                    detectedVersionText,
+                    tagPrefix,
+                    settings.fixedTag
+                )
                 val ok = dialog.showAndGet()
                 okHolder.set(ok)
-                if (ok) releaseTypeHolder.set(dialog.getSelectedType())
+                if (ok) {
+                    releaseTypeHolder.set(dialog.getSelectedType())
+                    selectedCustomTagHolder.set(dialog.getCustomTag())
+                }
             }
 
             if (!okHolder.get()) {
@@ -123,6 +161,14 @@ class DeployService(
                         return
                     }
                     versionService.buildTag(semver)
+                }
+                ReleaseType.FIXED -> settings.fixedTag.trim().ifBlank {
+                    DeployNotifications.error(project, message("deploy.fixedTagMissing"))
+                    return
+                }
+                ReleaseType.CUSTOM -> selectedCustomTagHolder.get().trim().ifBlank {
+                    DeployNotifications.error(project, message("deploy.customTagMissing"))
+                    return
                 }
                 ReleaseType.REVISION, ReleaseType.FEATURE, ReleaseType.MAJOR ->
                     versionService.buildTag(currentVersion.bump(releaseType))
@@ -180,6 +226,7 @@ class DeployService(
             runOrThrow(GitLineHandler(project, repo.root, GitCommand.PUSH).apply { addParameters(remote, targetBranch) })
 
             if (newTag != null) {
+                deleteTagIfExists(repo, remote, newTag)
                 runOrThrow(GitLineHandler(project, repo.root, GitCommand.TAG).apply {
                     addParameters("-a", newTag, "-m", "Deploy $newTag")
                 })

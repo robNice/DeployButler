@@ -37,6 +37,7 @@ class DeploySettingsConfigurable(
     private val branchField = JTextField()
     private val remoteField = JTextField()
     private val prefixField = JTextField()
+    private val fixedTagField = JTextField()
     private val preferredDetectorCombo = ComboBox(arrayOf("", "gradle", "maven", "package-json", "composer", "custom-regex"))
     private val customPathField = TextFieldWithBrowseButton()
     private val customRegexField = JTextField().apply {
@@ -70,6 +71,11 @@ class DeploySettingsConfigurable(
                     cell(prefixField).resizableColumn()
                 }
                 helpRow("settings.help.prefix")
+
+                row(message("settings.fixedTag")) {
+                    cell(fixedTagField).resizableColumn()
+                }
+                helpRow("settings.help.fixedTag")
 
                 row {
                     cell(rebaseCheckbox)
@@ -210,6 +216,7 @@ class DeploySettingsConfigurable(
         branchField.text = settings.targetBranch
         remoteField.text = settings.remoteName
         prefixField.text = settings.tagPrefix
+        fixedTagField.text = settings.fixedTag
         rebaseCheckbox.isSelected = settings.useRebase
         confirmCheckbox.isSelected = settings.confirmationsEnabled
         dryRunCheckbox.isSelected = settings.dryRunEnabled
@@ -224,6 +231,7 @@ class DeploySettingsConfigurable(
         branchField.text.trim() != settings.targetBranch ||
                 remoteField.text.trim() != settings.remoteName ||
                 prefixField.text.trim() != settings.tagPrefix ||
+                fixedTagField.text.trim() != settings.fixedTag ||
                 rebaseCheckbox.isSelected != settings.useRebase ||
                 confirmCheckbox.isSelected != settings.confirmationsEnabled ||
                 dryRunCheckbox.isSelected != settings.dryRunEnabled ||
@@ -236,6 +244,7 @@ class DeploySettingsConfigurable(
         settings.targetBranch = branchField.text.trim().ifBlank { "main" }
         settings.remoteName = remoteField.text.trim().ifBlank { "origin" }
         settings.tagPrefix = prefixField.text.trim().ifBlank { "v" }
+        settings.fixedTag = fixedTagField.text.trim()
         settings.useRebase = rebaseCheckbox.isSelected
         settings.confirmationsEnabled = confirmCheckbox.isSelected
         settings.dryRunEnabled = dryRunCheckbox.isSelected
