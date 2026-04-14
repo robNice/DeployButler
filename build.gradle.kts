@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "de.robnice"
-version = "1.1.4"
+version = "1.2.0"
 
 repositories {
     mavenCentral()
@@ -39,8 +39,7 @@ intellijPlatform {
         changeNotes = """
           <h2>New</h2>
             <ul>
-              <li>Expanded package.json version detection to also check common app folders and monorepo locations such as app, frontend, apps/*, packages/*, and services/*.</li>
-              <li>Reworked translations for better consistency and wording.</li>
+              <li>Added custom tag input and optional fixed tag selection in the release dialog.</li>
             </ul>
 
 

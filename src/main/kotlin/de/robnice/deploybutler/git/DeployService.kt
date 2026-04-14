@@ -149,6 +149,8 @@ class DeployService(
 
             val releaseType = releaseTypeHolder.get() ?: ReleaseType.NONE
 
+            val shouldReplaceExistingTag = releaseType == ReleaseType.FIXED || releaseType == ReleaseType.CUSTOM
+
             val newTag: String? = when (releaseType) {
                 ReleaseType.NONE -> null
                 ReleaseType.FROM_PROJECT_FILE -> {
@@ -226,7 +228,9 @@ class DeployService(
             runOrThrow(GitLineHandler(project, repo.root, GitCommand.PUSH).apply { addParameters(remote, targetBranch) })
 
             if (newTag != null) {
-                deleteTagIfExists(repo, remote, newTag)
+                if (shouldReplaceExistingTag) {
+                    deleteTagIfExists(repo, remote, newTag)
+                }
                 runOrThrow(GitLineHandler(project, repo.root, GitCommand.TAG).apply {
                     addParameters("-a", newTag, "-m", "Deploy $newTag")
                 })
