@@ -8,6 +8,7 @@ import com.intellij.ui.dsl.builder.bind
 import com.intellij.ui.dsl.builder.panel
 import de.robnice.deploybutler.i18n.message
 import javax.swing.JComponent
+import javax.swing.JSeparator
 import javax.swing.JTextField
 
 class ReleaseDialog(
@@ -42,25 +43,16 @@ class ReleaseDialog(
                         .align(AlignX.RIGHT)
                 }
 
+                row {
+                    cell(JSeparator()).resizableColumn()
+                }
+
                 if (detectedVersionText != null) {
                     row {
                         radioButton(message("dialog.release.fromProjectFile"), ReleaseType.FROM_PROJECT_FILE)
                             .resizableColumn()
                         label(detectedTagText ?: "").align(AlignX.RIGHT)
                     }
-                }
-
-                if (configuredFixedTag != null) {
-                    row {
-                        radioButton(message("dialog.release.fixedTag"), ReleaseType.FIXED)
-                            .resizableColumn()
-                        label(configuredFixedTag).align(AlignX.RIGHT)
-                    }
-                }
-
-                row {
-                    radioButton(message("dialog.release.customTag"), ReleaseType.CUSTOM)
-                    cell(customTagField).resizableColumn()
                 }
 
                 row {
@@ -77,6 +69,23 @@ class ReleaseDialog(
                     radioButton(message("dialog.release.major"), ReleaseType.MAJOR)
                         .resizableColumn()
                     label("-> $tagPrefix$nextMajor").align(AlignX.RIGHT)
+                }
+
+                row {
+                    cell(JSeparator()).resizableColumn()
+                }
+
+                if (configuredFixedTag != null) {
+                    row {
+                        radioButton(message("dialog.release.fixedTag"), ReleaseType.FIXED)
+                            .resizableColumn()
+                        label(configuredFixedTag).align(AlignX.RIGHT)
+                    }
+                }
+
+                row {
+                    radioButton(message("dialog.release.customTag"), ReleaseType.CUSTOM)
+                    cell(customTagField).resizableColumn()
                 }
             }.bind({ selectedType }, { selectedType = it })
         }
