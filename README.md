@@ -64,6 +64,12 @@ Typically there are three variants:
 
 Additionally, a **tag prefix** can be used (e.g. `v`) so tags are created as `v1.4.0` instead of `1.4.0`.
 
+You can also enter a **custom tag** directly in the release dialog.
+
+Optionally, you can configure a **fixed tag** in the plugin settings. If set, it is offered as an additional option in the release dialog.
+
+If the selected tag already exists, DeployButler deletes the existing local and remote tag before creating it again.
+
 ---
 
 #### Automatic Project Version Detection
@@ -204,6 +210,9 @@ DeployButler provides settings to adapt the workflow to your project and release
 
 - **Tag prefix**  
   Optional prefix for version tags (for example `v` → `v1.2.3`).
+
+- **Fixed tag**  
+  Optional fixed tag that is offered as an additional choice in the release dialog.
 
 - **Rebase instead of merge**  
   Uses a rebase-oriented workflow instead of a classic merge.

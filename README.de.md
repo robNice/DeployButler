@@ -61,6 +61,12 @@ DeployButler kann einen Release-Typ auswählen lassen, um daraus den nächsten V
 
 Zusätzlich kann ein **Tag-Prefix** genutzt werden (z. B. `v`), damit Tags z. B. als `v1.4.0` statt `1.4.0` erstellt werden.
 
+Außerdem kann im Release-Dialog auch direkt ein **benutzerdefinierter Tag** eingegeben werden.
+
+Optional kann in den Plugin-Settings zusätzlich ein **festes Tag** hinterlegt werden. Ist es gesetzt, erscheint es ebenfalls als auswählbare Option im Release-Dialog.
+
+Wenn ein ausgewählter Tag bereits existiert, wird der vorhandene Tag vor dem Neuerstellen zuerst lokal und auf dem Remote gelöscht.
+
 ---
 
 #### Automatische Ermittlung der Projektversion
@@ -201,6 +207,9 @@ DeployButler bietet Settings, um den Ablauf an dein Projekt und deinen Release-P
 
 - **Tag-Prefix**  
   Optionales Prefix für Versions-Tags (zum Beispiel `v` → `v1.2.3`).
+
+- **Festes Tag**  
+  Optionaler fester Tag, der im Release-Dialog als zusätzliche Auswahl angeboten wird.
 
 - **Rebase statt Merge**  
   Verwendet einen Rebase-orientierten Ablauf statt eines klassischen Merges.
