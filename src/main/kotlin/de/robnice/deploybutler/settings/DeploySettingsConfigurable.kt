@@ -1,8 +1,6 @@
 package de.robnice.deploybutler.settings
 
 import de.robnice.deploybutler.i18n.message
-import com.intellij.icons.AllIcons
-import com.intellij.ide.HelpTooltip
 import com.intellij.openapi.components.service
 import com.intellij.openapi.fileChooser.FileChooserDescriptor
 import com.intellij.openapi.options.Configurable
@@ -11,6 +9,7 @@ import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.TextFieldWithBrowseButton
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.ContextHelpLabel
 import com.intellij.ui.JBColor
 import com.intellij.ui.dsl.builder.AlignY
 import com.intellij.ui.dsl.builder.panel
@@ -212,11 +211,7 @@ class DeploySettingsConfigurable(
     }
 
     private fun helpIcon(messageKey: String): JLabel =
-        JLabel(AllIcons.General.ContextHelp).apply {
-            HelpTooltip()
-                .setDescription(message(messageKey))
-                .installOn(this)
-        }
+        ContextHelpLabel.create(message(messageKey))
 
     override fun reset() {
         branchField.text = settings.targetBranch
