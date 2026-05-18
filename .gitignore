@@ -53,3 +53,4 @@ bin/
 # locks / temp
 self-update.lock
 /AGENTS.md
+/.claude

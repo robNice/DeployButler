@@ -21,13 +21,13 @@ class VersionDetectionService(
 ) {
     fun detect(repoRoot: File): String? {
         val preferred = settings.preferredVersionDetector.trim()
-
-        val orderedDetectors = if (preferred.isBlank()) {
-            detectors
-        } else {
-            detectors.sortedBy { if (it.id == preferred) 0 else 1 }
-        }
-
+        val orderedDetectors = if (preferred.isBlank()) detectors else detectors.sortedBy { if (it.id == preferred) 0 else 1 }
         return orderedDetectors.firstNotNullOfOrNull { it.detect(repoRoot, settings) }
+    }
+
+    fun detectWithResult(repoRoot: File): VersionDetectionResult? {
+        val preferred = settings.preferredVersionDetector.trim()
+        val orderedDetectors = if (preferred.isBlank()) detectors else detectors.sortedBy { if (it.id == preferred) 0 else 1 }
+        return orderedDetectors.firstNotNullOfOrNull { it.detectResult(repoRoot, settings) }
     }
 }

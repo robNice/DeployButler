@@ -2,25 +2,30 @@ package de.robnice.deploybutler.version
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.bind
 import com.intellij.ui.dsl.builder.panel
 import de.robnice.deploybutler.i18n.message
 import javax.swing.JComponent
+import javax.swing.JLabel
 import javax.swing.JSeparator
 import javax.swing.JTextField
 
 class ReleaseDialog(
-    project: Project,
+    private val project: Project,
     private val currentVersion: Version,
     private val detectedVersionText: String?,
     private val tagPrefix: String,
-    private val fixedTag: String?
+    private val fixedTag: String?,
+    private val detectionResult: VersionDetectionResult? = null,
+    private val autoUpdateEnabled: Boolean = false
 ) : DialogWrapper(project) {
 
     private var selectedType: ReleaseType = ReleaseType.NONE
     private val customTagField = JTextField()
+    private var fromProjectFileLabel: JLabel? = null
 
     init {
         title = message("dialog.release.title")
@@ -54,7 +59,7 @@ class ReleaseDialog(
                     row {
                         radioButton(message("dialog.release.fromProjectFile"), ReleaseType.FROM_PROJECT_FILE)
                             .resizableColumn()
-                        label(detectedTagText ?: "").align(AlignX.RIGHT)
+                        fromProjectFileLabel = label(detectedTagText ?: "").align(AlignX.RIGHT).component
                     }
                 }
 
@@ -95,6 +100,37 @@ class ReleaseDialog(
                     cell(customTagField).align(AlignX.RIGHT)
                 }
             }.bind({ selectedType }, { selectedType = it })
+
+            if (autoUpdateEnabled && detectionResult != null) {
+                row {
+                    cell(JSeparator())
+                        .resizableColumn()
+                        .align(AlignX.FILL)
+                    label("")
+                }
+                row {
+                    button(message("dialog.release.updateVersionInFile")) {
+                        showUpdateVersionInFileDialog()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showUpdateVersionInFileDialog() {
+        val result = detectionResult ?: return
+        val dialog = UpdateVersionInFileDialog(project, currentVersion, tagPrefix)
+        if (!dialog.showAndGet()) return
+        val newVersion = dialog.getNewVersion()
+        val success = result.replaceVersion(newVersion)
+        if (success) {
+            fromProjectFileLabel?.text = "$tagPrefix$newVersion"
+        } else {
+            Messages.showErrorDialog(
+                project,
+                message("dialog.updateVersion.writeFailed"),
+                message("dialog.updateVersion.title")
+            )
         }
     }
 

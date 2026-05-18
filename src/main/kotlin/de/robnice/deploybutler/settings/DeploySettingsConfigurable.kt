@@ -38,6 +38,7 @@ class DeploySettingsConfigurable(
     private val remoteField = JTextField()
     private val prefixField = JTextField()
     private val fixedTagField = JTextField()
+    private val autoUpdateVersionCheckbox = JCheckBox(message("settings.autoUpdateVersion"))
     private val preferredDetectorCombo = ComboBox(arrayOf("", "gradle", "maven", "package-json", "composer", "custom-regex"))
     private val customPathField = TextFieldWithBrowseButton()
     private val customRegexField = JTextField().apply {
@@ -89,6 +90,11 @@ class DeploySettingsConfigurable(
             }
 
             group(message("settings.section.versionDetection")) {
+                row {
+                    cell(autoUpdateVersionCheckbox)
+                }
+                helpRow("settings.help.autoUpdateVersion")
+
                 row(message("settings.versionDetector")) {
                     cell(preferredDetectorCombo).resizableColumn()
                 }
@@ -221,6 +227,7 @@ class DeploySettingsConfigurable(
         confirmCheckbox.isSelected = settings.confirmationsEnabled
         dryRunCheckbox.isSelected = settings.dryRunEnabled
 
+        autoUpdateVersionCheckbox.isSelected = settings.autoUpdateVersion
         preferredDetectorCombo.selectedItem = settings.preferredVersionDetector
         customPathField.text = settings.versionCustomPath
         customRegexField.text = settings.versionCustomRegex
@@ -235,6 +242,7 @@ class DeploySettingsConfigurable(
                 rebaseCheckbox.isSelected != settings.useRebase ||
                 confirmCheckbox.isSelected != settings.confirmationsEnabled ||
                 dryRunCheckbox.isSelected != settings.dryRunEnabled ||
+                autoUpdateVersionCheckbox.isSelected != settings.autoUpdateVersion ||
                 (preferredDetectorCombo.selectedItem as? String ?: "").trim() != settings.preferredVersionDetector ||
                 customPathField.text.trim() != settings.versionCustomPath ||
                 customRegexField.text.trim() != settings.versionCustomRegex ||
@@ -249,6 +257,7 @@ class DeploySettingsConfigurable(
         settings.confirmationsEnabled = confirmCheckbox.isSelected
         settings.dryRunEnabled = dryRunCheckbox.isSelected
 
+        settings.autoUpdateVersion = autoUpdateVersionCheckbox.isSelected
         settings.preferredVersionDetector = (preferredDetectorCombo.selectedItem as? String ?: "").trim()
         settings.versionCustomPath = toRelativeProjectPath(customPathField.text)
         settings.versionCustomRegex = customRegexField.text

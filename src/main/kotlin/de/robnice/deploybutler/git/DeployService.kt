@@ -120,7 +120,8 @@ class DeployService(
             val versionService = VersionService(project, repo, tagPrefix)
             val currentVersion = versionService.getLatestVersion()
             val versionDetectionService = VersionDetectionService(settings)
-            val detectedVersionText = versionDetectionService.detect(File(repo.root.path))
+            val detectionResult = versionDetectionService.detectWithResult(File(repo.root.path))
+            val detectedVersionText = detectionResult?.version
 
             val releaseTypeHolder = AtomicReference<ReleaseType?>(null)
             val selectedCustomTagHolder = AtomicReference("")
@@ -132,7 +133,9 @@ class DeployService(
                     currentVersion,
                     detectedVersionText,
                     tagPrefix,
-                    settings.fixedTag
+                    settings.fixedTag,
+                    detectionResult,
+                    settings.autoUpdateVersion
                 )
                 val ok = dialog.showAndGet()
                 okHolder.set(ok)
