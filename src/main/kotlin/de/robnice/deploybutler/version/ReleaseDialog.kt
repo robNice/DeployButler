@@ -61,6 +61,19 @@ class ReleaseDialog(
                             .resizableColumn()
                         fromProjectFileLabel = label(detectedTagText ?: "").align(AlignX.RIGHT).component
                     }
+                    if (autoUpdateEnabled && detectionResult != null) {
+                        row {
+                            button(message("dialog.release.updateVersionInFile")) {
+                                showUpdateVersionInFileDialog()
+                            }
+                        }
+                        row {
+                            cell(JSeparator())
+                                .resizableColumn()
+                                .align(AlignX.FILL)
+                            label("")
+                        }
+                    }
                 }
 
                 row {
@@ -100,20 +113,6 @@ class ReleaseDialog(
                     cell(customTagField).align(AlignX.RIGHT)
                 }
             }.bind({ selectedType }, { selectedType = it })
-
-            if (autoUpdateEnabled && detectionResult != null) {
-                row {
-                    cell(JSeparator())
-                        .resizableColumn()
-                        .align(AlignX.FILL)
-                    label("")
-                }
-                row {
-                    button(message("dialog.release.updateVersionInFile")) {
-                        showUpdateVersionInFileDialog()
-                    }
-                }
-            }
         }
     }
 
