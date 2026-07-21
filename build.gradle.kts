@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "de.robnice"
-version = "1.3.0"
+version = "1.4.0"
 
 repositories {
     mavenCentral()
@@ -39,7 +39,7 @@ intellijPlatform {
         changeNotes = """
           <h2>New</h2>
             <ul>
-              <li>Added option to update the version in the project file directly from the release dialog.</li>
+              <li>Added automatic version detection for Tauri projects, including Tauri config files and Cargo.toml fallback.</li>
             </ul>
           <h2>Fixes</h2>
             <ul>

@@ -21,13 +21,13 @@ class PackageJsonVersionDetector : VersionDetector {
     private val monorepoDirectories = listOf("apps", "packages", "services")
 
     override fun detect(repoRoot: File, settings: DeploySettingsState): String? =
-        candidateFiles(repoRoot).firstNotNullOfOrNull { file ->
+        candidateFiles(repoRoot, settings).firstNotNullOfOrNull { file ->
             val text = runCatching { file.readText(Charsets.UTF_8) }.getOrNull() ?: return@firstNotNullOfOrNull null
             versionRegex.find(text)?.groupValues?.getOrNull(1)?.trim()?.takeIf { it.isNotBlank() }
         }
 
     override fun detectResult(repoRoot: File, settings: DeploySettingsState): VersionDetectionResult? =
-        candidateFiles(repoRoot).firstNotNullOfOrNull { file ->
+        candidateFiles(repoRoot, settings).firstNotNullOfOrNull { file ->
             val text = runCatching { file.readText(Charsets.UTF_8) }.getOrNull() ?: return@firstNotNullOfOrNull null
             val version = versionRegex.find(text)?.groupValues?.getOrNull(1)?.trim()?.takeIf { it.isNotBlank() }
                 ?: return@firstNotNullOfOrNull null
@@ -36,7 +36,8 @@ class PackageJsonVersionDetector : VersionDetector {
             }
         }
 
-    private fun candidateFiles(repoRoot: File): List<File> = buildList {
+    private fun candidateFiles(repoRoot: File, settings: DeploySettingsState): List<File> = buildList {
+        settings.versionCustomPath.trim().takeIf { it.isNotBlank() }?.let { add(File(repoRoot, it)) }
         directSearchPaths.map { File(repoRoot, it) }.filterTo(this) { it.isFile }
         monorepoDirectories.forEach { directoryName ->
             val directory = File(repoRoot, directoryName)
@@ -47,5 +48,5 @@ class PackageJsonVersionDetector : VersionDetector {
                     if (file.isFile) add(file)
                 }
         }
-    }
+    }.distinctBy { it.absolutePath }
 }

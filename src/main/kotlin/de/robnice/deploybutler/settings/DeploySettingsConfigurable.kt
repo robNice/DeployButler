@@ -38,7 +38,7 @@ class DeploySettingsConfigurable(
     private val prefixField = JTextField()
     private val fixedTagField = JTextField()
     private val autoUpdateVersionCheckbox = JCheckBox(message("settings.autoUpdateVersion"))
-    private val preferredDetectorCombo = ComboBox(arrayOf("", "gradle", "maven", "package-json", "composer", "custom-regex"))
+    private val preferredDetectorCombo = ComboBox(arrayOf("", "tauri", "gradle", "maven", "package-json", "composer", "custom-regex"))
     private val customPathField = TextFieldWithBrowseButton()
     private val customRegexField = JTextField().apply {
         columns = 40

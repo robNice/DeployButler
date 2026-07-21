@@ -84,6 +84,11 @@ This is especially useful when the version is already maintained inside the proj
 
 DeployButler currently supports the following sources for automatic detection:
 
+- **Tauri**
+  - works when the version is defined directly in `src-tauri/tauri.conf.json`, `src-tauri/tauri.conf.json5`, or `src-tauri/Tauri.toml`
+  - also checks platform-specific Tauri config files and falls back to `src-tauri/Cargo.toml`
+  - if the Tauri config points its `version` field to a `package.json`, that file is read instead
+
 - **Gradle**
   - works when the version is defined directly in a Gradle file as a fixed value
   - typical examples are:

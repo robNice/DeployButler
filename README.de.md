@@ -81,6 +81,11 @@ Das ist vor allem dann praktisch, wenn die Version bereits im Projekt gepflegt w
 
 Aktuell unterstützt DeployButler dafür folgende Quellen:
 
+- **Tauri**
+  - funktioniert, wenn die Version direkt in `src-tauri/tauri.conf.json`, `src-tauri/tauri.conf.json5` oder `src-tauri/Tauri.toml` gesetzt ist
+  - berücksichtigt außerdem plattformspezifische Tauri-Config-Dateien und fällt auf `src-tauri/Cargo.toml` zurück
+  - wenn das `version`-Feld in der Tauri-Config auf eine `package.json` verweist, wird stattdessen diese Datei ausgelesen
+
 - **Gradle**
   - funktioniert, wenn die Version direkt in einer Gradle-Datei als Wert hinterlegt ist
   - typische Fälle sind z. B.:
