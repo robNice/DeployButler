@@ -18,7 +18,7 @@ class VersionService(
         val tags = result.output
             .asSequence()
             .filter { it.startsWith(tagPrefix) }
-            .map { it.removePrefix(tagPrefix) }
+            .map { it.removePrefix(tagPrefix).substringBefore('-') }
             .mapNotNull { runCatching { Version.parse(it) }.getOrNull() }
             .toList()
 

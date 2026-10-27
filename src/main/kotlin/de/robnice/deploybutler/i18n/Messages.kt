@@ -5,7 +5,7 @@ import org.jetbrains.annotations.PropertyKey
 
 private const val BUNDLE = "messages.messages"
 
-object Messages : DynamicBundle(BUNDLE)
+object Messages : DynamicBundle(Messages::class.java, BUNDLE)
 
 fun message(
     @PropertyKey(resourceBundle = BUNDLE) key: String,

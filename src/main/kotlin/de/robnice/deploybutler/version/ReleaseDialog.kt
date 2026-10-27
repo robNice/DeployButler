@@ -1,6 +1,7 @@
 package de.robnice.deploybutler.version
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.ValidationInfo
@@ -20,11 +21,13 @@ class ReleaseDialog(
     private val tagPrefix: String,
     private val fixedTag: String?,
     private val detectionResult: VersionDetectionResult? = null,
-    private val autoUpdateEnabled: Boolean = false
+    private val autoUpdateEnabled: Boolean = false,
+    private val tagExtensions: List<String> = emptyList()
 ) : DialogWrapper(project) {
 
     private var selectedType: ReleaseType = ReleaseType.NONE
     private val customTagField = JTextField()
+    private val tagExtensionCombo = ComboBox(arrayOf("") + tagExtensions)
     private var fromProjectFileLabel: JLabel? = null
 
     init {
@@ -113,6 +116,20 @@ class ReleaseDialog(
                     cell(customTagField).align(AlignX.RIGHT)
                 }
             }.bind({ selectedType }, { selectedType = it })
+
+            if (tagExtensions.isNotEmpty()) {
+                row {
+                    cell(JSeparator())
+                        .resizableColumn()
+                        .align(AlignX.FILL)
+                    label("")
+                }
+                row {
+                    label(message("dialog.release.tagExtension"))
+                        .resizableColumn()
+                    cell(tagExtensionCombo).align(AlignX.RIGHT)
+                }
+            }
         }
     }
 
@@ -143,4 +160,6 @@ class ReleaseDialog(
     fun getSelectedType(): ReleaseType = selectedType
 
     fun getCustomTag(): String = customTagField.text.trim()
+
+    fun getTagExtension(): String = (tagExtensionCombo.selectedItem as? String).orEmpty().trim()
 }

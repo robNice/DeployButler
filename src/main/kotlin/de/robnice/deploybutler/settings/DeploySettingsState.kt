@@ -13,6 +13,7 @@ class DeploySettingsState : PersistentStateComponent<DeploySettingsState> {
     var remoteName: String = "origin"
     var tagPrefix: String = "v"
     var fixedTag: String = ""
+    var tagExtensions: MutableList<String> = mutableListOf()
     var useRebase: Boolean = false
     var confirmationsEnabled: Boolean = true
     var versionCustomPath: String = ""

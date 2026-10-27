@@ -11,7 +11,10 @@ import javax.swing.JPanel
 import javax.swing.JTextField
 import javax.swing.KeyStroke
 
-class DeployChecksEditorPanel : JPanel(BorderLayout()) {
+class DeployChecksEditorPanel(
+    private val addTooltip: String = "Add check",
+    private val removeTooltip: String = "Remove check"
+) : JPanel(BorderLayout()) {
 
     private val inputField = JTextField()
 
@@ -21,7 +24,7 @@ class DeployChecksEditorPanel : JPanel(BorderLayout()) {
 
     init {
         val addButton = JButton("+").apply {
-            toolTipText = "Add check"
+            toolTipText = addTooltip
             addActionListener { addFromInput() }
         }
 
@@ -118,7 +121,7 @@ class DeployChecksEditorPanel : JPanel(BorderLayout()) {
                     addActionListener { moveRowDown(this@CheckRowPanel) }
                 })
                 add(JButton("−").apply {
-                    toolTipText = "Remove check"
+                    toolTipText = removeTooltip
                     addActionListener { removeRow(this@CheckRowPanel) }
                 })
             }

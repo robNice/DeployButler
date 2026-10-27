@@ -125,6 +125,7 @@ class DeployService(
 
             val releaseTypeHolder = AtomicReference<ReleaseType?>(null)
             val selectedCustomTagHolder = AtomicReference("")
+            val selectedTagExtensionHolder = AtomicReference("")
             val okHolder = AtomicReference(false)
 
             ApplicationManager.getApplication().invokeAndWait {
@@ -135,13 +136,15 @@ class DeployService(
                     tagPrefix,
                     settings.fixedTag,
                     detectionResult,
-                    settings.autoUpdateVersion
+                    settings.autoUpdateVersion,
+                    settings.tagExtensions.map { it.trim() }.filter { it.isNotBlank() }
                 )
                 val ok = dialog.showAndGet()
                 okHolder.set(ok)
                 if (ok) {
                     releaseTypeHolder.set(dialog.getSelectedType())
                     selectedCustomTagHolder.set(dialog.getCustomTag())
+                    selectedTagExtensionHolder.set(dialog.getTagExtension())
                 }
             }
 
@@ -154,7 +157,7 @@ class DeployService(
 
             val shouldReplaceExistingTag = releaseType == ReleaseType.FIXED || releaseType == ReleaseType.CUSTOM
 
-            val newTag: String? = when (releaseType) {
+            val baseTag: String? = when (releaseType) {
                 ReleaseType.NONE -> null
                 ReleaseType.FROM_PROJECT_FILE -> {
                     val v = detectedVersionText ?: run {
@@ -178,6 +181,9 @@ class DeployService(
                 ReleaseType.REVISION, ReleaseType.FEATURE, ReleaseType.MAJOR ->
                     versionService.buildTag(currentVersion.bump(releaseType))
             }
+
+            val tagExtension = selectedTagExtensionHolder.get()
+            val newTag = baseTag?.let { if (tagExtension.isBlank()) it else "$it-$tagExtension" }
 
             val deployChecks = settings.deployChecks
                 .map { it.trim() }

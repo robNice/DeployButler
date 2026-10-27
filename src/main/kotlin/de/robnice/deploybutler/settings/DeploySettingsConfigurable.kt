@@ -44,6 +44,7 @@ class DeploySettingsConfigurable(
         columns = 40
     }
     private val deployChecksEditor = DeployChecksEditorPanel()
+    private val tagExtensionsEditor = DeployChecksEditorPanel("Add tag extension", "Remove tag extension")
 
     init {
         setupCustomPathChooser()
@@ -76,6 +77,18 @@ class DeploySettingsConfigurable(
                     cell(fixedTagField).resizableColumn()
                 }
                 helpRow("settings.help.fixedTag")
+
+                row {
+                    label(message("settings.tagExtensions"))
+                        .align(AlignY.TOP)
+
+                    cell(tagExtensionsEditor)
+                        .resizableColumn()
+                        .align(AlignY.TOP)
+
+                    cell(helpIcon("settings.help.tagExtensions"))
+                        .align(AlignY.TOP)
+                }
 
                 row {
                     cell(rebaseCheckbox)
@@ -218,6 +231,7 @@ class DeploySettingsConfigurable(
         remoteField.text = settings.remoteName
         prefixField.text = settings.tagPrefix
         fixedTagField.text = settings.fixedTag
+        tagExtensionsEditor.setChecks(settings.tagExtensions)
         rebaseCheckbox.isSelected = settings.useRebase
         confirmCheckbox.isSelected = settings.confirmationsEnabled
         dryRunCheckbox.isSelected = settings.dryRunEnabled
@@ -234,6 +248,7 @@ class DeploySettingsConfigurable(
                 remoteField.text.trim() != settings.remoteName ||
                 prefixField.text.trim() != settings.tagPrefix ||
                 fixedTagField.text.trim() != settings.fixedTag ||
+                tagExtensionsEditor.getChecks() != settings.tagExtensions ||
                 rebaseCheckbox.isSelected != settings.useRebase ||
                 confirmCheckbox.isSelected != settings.confirmationsEnabled ||
                 dryRunCheckbox.isSelected != settings.dryRunEnabled ||
@@ -248,6 +263,7 @@ class DeploySettingsConfigurable(
         settings.remoteName = remoteField.text.trim().ifBlank { "origin" }
         settings.tagPrefix = prefixField.text.trim().ifBlank { "v" }
         settings.fixedTag = fixedTagField.text.trim()
+        settings.tagExtensions = tagExtensionsEditor.getChecks()
         settings.useRebase = rebaseCheckbox.isSelected
         settings.confirmationsEnabled = confirmCheckbox.isSelected
         settings.dryRunEnabled = dryRunCheckbox.isSelected
