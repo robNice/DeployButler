@@ -40,6 +40,8 @@ intellijPlatform {
           <h2>New</h2>
             <ul>
               <li>Added automatic version detection for Tauri projects, including Tauri config files and Cargo.toml fallback.</li>
+              <li>Added configurable tag extensions: select a suffix in the release dialog to append it to the tag with a hyphen (e.g. v1.0.1-GT).</li>
+              <li>Tags with a suffix (e.g. v1.0.1-GT) are now considered when determining the latest version.</li>
             </ul>
           <h2>Fixes</h2>
             <ul>
