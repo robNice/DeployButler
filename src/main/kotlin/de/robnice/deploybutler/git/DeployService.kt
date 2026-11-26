@@ -126,6 +126,7 @@ class DeployService(
             val releaseTypeHolder = AtomicReference<ReleaseType?>(null)
             val selectedCustomTagHolder = AtomicReference("")
             val selectedTagExtensionHolder = AtomicReference("")
+            val selectedAnnotationHolder = AtomicReference("")
             val okHolder = AtomicReference(false)
 
             ApplicationManager.getApplication().invokeAndWait {
@@ -145,6 +146,7 @@ class DeployService(
                     releaseTypeHolder.set(dialog.getSelectedType())
                     selectedCustomTagHolder.set(dialog.getCustomTag())
                     selectedTagExtensionHolder.set(dialog.getTagExtension())
+                    selectedAnnotationHolder.set(dialog.getAnnotation())
                 }
             }
 
@@ -241,7 +243,8 @@ class DeployService(
                     deleteTagIfExists(repo, remote, newTag)
                 }
                 runOrThrow(GitLineHandler(project, repo.root, GitCommand.TAG).apply {
-                    addParameters("-a", newTag, "-m", "Deploy $newTag")
+                    val annotation = selectedAnnotationHolder.get().ifBlank { "Deploy $newTag" }
+                    addParameters("-a", newTag, "-m", annotation)
                 })
                 runOrThrow(GitLineHandler(project, repo.root, GitCommand.PUSH).apply { addParameters(remote, newTag) })
             }

@@ -109,6 +109,10 @@ Aktuell unterstützt DeployButler dafür folgende Quellen:
   - typischer Fall:
     - `<version>1.2.3</version>`
 
+- **VERSION-Datei**
+  - funktioniert, wenn im Projekt-Root eine einfache Textdatei namens `VERSION`, `VERSION.txt` oder `version.txt` liegt
+  - verwendet wird die erste Zeile mit einer Version wie `1.2.3` oder `v1.2.3`
+
 - **Custom Path + Regex**
   - für Sonderfälle kann in den Einstellungen ein eigener Dateipfad und ein eigener regulärer Ausdruck hinterlegt werden
   - damit lassen sich auch projektspezifische oder ungewöhnliche Versionsformate auswerten

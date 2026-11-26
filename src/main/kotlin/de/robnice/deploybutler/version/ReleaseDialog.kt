@@ -8,9 +8,15 @@ import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.bind
 import com.intellij.ui.dsl.builder.panel
+import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.components.JBTextArea
+import com.intellij.util.ui.JBUI
 import de.robnice.deploybutler.i18n.message
+import java.awt.BorderLayout
+import java.awt.Dimension
 import javax.swing.JComponent
 import javax.swing.JLabel
+import javax.swing.JPanel
 import javax.swing.JSeparator
 import javax.swing.JTextField
 
@@ -29,6 +35,10 @@ class ReleaseDialog(
     private val customTagField = JTextField()
     private val tagExtensionCombo = ComboBox(arrayOf("") + tagExtensions)
     private var fromProjectFileLabel: JLabel? = null
+    private val annotationArea = JBTextArea(10, 30).apply {
+        lineWrap = true
+        wrapStyleWord = true
+    }
 
     init {
         title = message("dialog.release.title")
@@ -42,7 +52,7 @@ class ReleaseDialog(
         val detectedTagText = detectedVersionText?.let { "$tagPrefix$it" }
         val configuredFixedTag = fixedTag?.trim().orEmpty().ifBlank { null }
 
-        return panel {
+        val formPanel = panel {
             buttonsGroup {
                 row {
                     radioButton(message("dialog.release.none"), ReleaseType.NONE)
@@ -131,6 +141,18 @@ class ReleaseDialog(
                 }
             }
         }
+
+        val annotationPanel = JPanel(BorderLayout(0, JBUI.scale(4))).apply {
+            add(JLabel(message("dialog.release.annotation")), BorderLayout.NORTH)
+            add(JBScrollPane(annotationArea).apply {
+                preferredSize = Dimension(JBUI.scale(300), JBUI.scale(200))
+            }, BorderLayout.CENTER)
+        }
+
+        return JPanel(BorderLayout(JBUI.scale(16), 0)).apply {
+            add(formPanel, BorderLayout.WEST)
+            add(annotationPanel, BorderLayout.CENTER)
+        }
     }
 
     private fun showUpdateVersionInFileDialog() {
@@ -162,4 +184,6 @@ class ReleaseDialog(
     fun getCustomTag(): String = customTagField.text.trim()
 
     fun getTagExtension(): String = (tagExtensionCombo.selectedItem as? String).orEmpty().trim()
+
+    fun getAnnotation(): String = annotationArea.text.trim()
 }

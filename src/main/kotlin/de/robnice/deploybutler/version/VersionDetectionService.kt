@@ -6,6 +6,7 @@ import de.robnice.deploybutler.version.detector.CustomRegexVersionDetector
 import de.robnice.deploybutler.version.detector.GradleVersionDetector
 import de.robnice.deploybutler.version.detector.MavenVersionDetector
 import de.robnice.deploybutler.version.detector.PackageJsonVersionDetector
+import de.robnice.deploybutler.version.detector.PlainVersionFileDetector
 import de.robnice.deploybutler.version.detector.TauriVersionDetector
 import de.robnice.deploybutler.version.detector.VersionDetector
 import java.io.File
@@ -18,7 +19,8 @@ class VersionDetectionService(
         GradleVersionDetector(),
         PackageJsonVersionDetector(),
         ComposerVersionDetector(),
-        MavenVersionDetector()
+        MavenVersionDetector(),
+        PlainVersionFileDetector()
     )
 ) {
     fun detect(repoRoot: File): String? {

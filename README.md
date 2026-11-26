@@ -112,6 +112,10 @@ DeployButler currently supports the following sources for automatic detection:
   - typical example:
     - `<version>1.2.3</version>`
 
+- **VERSION file**
+  - works when the project root contains a plain text file named `VERSION`, `VERSION.txt` or `version.txt`
+  - the first line containing a version such as `1.2.3` or `v1.2.3` is used
+
 - **Custom path + regex**
   - for special cases, you can configure a custom file path and a custom regular expression in the settings
   - this makes it possible to detect versions from project-specific or uncommon file formats
