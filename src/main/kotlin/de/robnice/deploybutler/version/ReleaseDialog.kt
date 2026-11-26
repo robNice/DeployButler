@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.ui.DialogPanel
 import com.intellij.openapi.ui.ValidationInfo
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.bind
@@ -35,6 +36,7 @@ class ReleaseDialog(
     private val customTagField = JTextField()
     private val tagExtensionCombo = ComboBox(arrayOf("") + tagExtensions)
     private var fromProjectFileLabel: JLabel? = null
+    private var formPanel: DialogPanel? = null
     private val annotationArea = JBTextArea(10, 30).apply {
         lineWrap = true
         wrapStyleWord = true
@@ -142,6 +144,8 @@ class ReleaseDialog(
             }
         }
 
+        this.formPanel = formPanel
+
         val annotationPanel = JPanel(BorderLayout(0, JBUI.scale(4))).apply {
             add(JLabel(message("dialog.release.annotation")), BorderLayout.NORTH)
             add(JBScrollPane(annotationArea).apply {
@@ -173,10 +177,17 @@ class ReleaseDialog(
     }
 
     override fun doValidate(): ValidationInfo? {
+        // The DSL panel is wrapped in a plain JPanel, so DialogWrapper does not apply it automatically.
+        formPanel?.apply()
         if (selectedType == ReleaseType.CUSTOM && customTagField.text.trim().isBlank()) {
             return ValidationInfo(message("dialog.release.customTag.required"), customTagField)
         }
         return null
+    }
+
+    override fun doOKAction() {
+        formPanel?.apply()
+        super.doOKAction()
     }
 
     fun getSelectedType(): ReleaseType = selectedType
