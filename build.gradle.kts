@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "de.robnice"
-version = "1.6.0"
+version = "1.6.1"
 
 repositories {
     mavenCentral()
@@ -39,13 +39,8 @@ intellijPlatform {
         changeNotes = """
           <h2>New</h2>
             <ul>
-              <li>Added automatic version detection for Tauri projects, including Tauri config files and Cargo.toml fallback.</li>
-              <li>Added configurable tag extensions: select a suffix in the release dialog to append it to the tag with a hyphen (e.g. v1.0.1-GT).</li>
-              <li>Tags with a suffix (e.g. v1.0.1-GT) are now considered when determining the latest version.</li>
-            </ul>
-          <h2>Fixes</h2>
-            <ul>
-              <li>Removed usage of deprecated platform API.</li>
+              <li>Added automatic version detection from plain VERSION files (VERSION, VERSION.txt, version.txt) in the project root.</li>
+              <li>Added a tag annotation field to the release dialog. If left empty, the default annotation "Deploy &lt;tag&gt;" is used.</li>
             </ul>
         """.trimIndent()
     }
