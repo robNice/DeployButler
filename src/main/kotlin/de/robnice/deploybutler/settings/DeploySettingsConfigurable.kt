@@ -15,7 +15,9 @@ import com.intellij.ui.components.JBScrollPane
 import com.intellij.ui.components.JBTextArea
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.AlignY
-import de.robnice.deploybutler.git.DeployService
+import com.intellij.openapi.ui.Messages
+import de.robnice.deploybutler.agent.AgentInstructions
+import de.robnice.deploybutler.git.PendingAnnotation
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.openapi.fileChooser.FileChooser
 import com.intellij.openapi.ui.TextComponentAccessor
@@ -122,7 +124,7 @@ class DeploySettingsConfigurable(
                         .align(AlignX.FILL)
 
                     cell(ContextHelpLabel.create(
-                        message("settings.help.defaultAnnotation", DeployService.TAG_PLACEHOLDER, DeployService.ANNOTATION_FILE_NAME)
+                        message("settings.help.defaultAnnotation", PendingAnnotation.TAG_PLACEHOLDER, PendingAnnotation.FILE_NAME)
                     ))
                         .align(AlignY.TOP)
                 }
@@ -137,6 +139,18 @@ class DeploySettingsConfigurable(
                     cell(rememberAnnotationCheckbox)
                 }
                 helpRow("settings.help.remember")
+            }
+
+            group(message("settings.section.aiAgents")) {
+                row {
+                    button(message("settings.agents.write", AgentInstructions.AGENTS_MD)) {
+                        writeAgentInstructions(AgentInstructions.AGENTS_MD)
+                    }
+                    button(message("settings.agents.write", AgentInstructions.CLAUDE_MD)) {
+                        writeAgentInstructions(AgentInstructions.CLAUDE_MD)
+                    }
+                }
+                helpRow("settings.help.agents")
             }
 
             group(message("settings.section.versionDetection")) {
@@ -175,6 +189,20 @@ class DeploySettingsConfigurable(
                 }
             }
         }
+
+    private fun writeAgentInstructions(fileName: String) {
+        try {
+            val key = when (AgentInstructions.upsert(project, fileName)) {
+                AgentInstructions.Result.CREATED -> "settings.agents.result.created"
+                AgentInstructions.Result.ADDED -> "settings.agents.result.added"
+                AgentInstructions.Result.UPDATED -> "settings.agents.result.updated"
+                AgentInstructions.Result.UNCHANGED -> "settings.agents.result.unchanged"
+            }
+            Messages.showInfoMessage(project, message(key, fileName), message("settings.section.aiAgents"))
+        } catch (e: Exception) {
+            Messages.showErrorDialog(project, message("settings.agents.failed", fileName, e.message ?: ""), message("settings.section.aiAgents"))
+        }
+    }
 
     private fun setupCustomPathChooser() {
         val basePath = project.basePath ?: return

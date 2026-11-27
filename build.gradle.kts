@@ -22,6 +22,9 @@ dependencies {
         // Git support
         bundledPlugin("Git4Idea")
 
+        // Optional: built-in MCP server of the IDE (tools for AI agents)
+        bundledPlugin("com.intellij.mcpServer")
+
         // Test framework
         testFramework(org.jetbrains.intellij.platform.gradle.TestFrameworkType.Platform)
     }
@@ -44,6 +47,7 @@ intellijPlatform {
               <li>Added a configurable default tag annotation (pre-filled in the release dialog, supports the {tag} placeholder).</li>
               <li>The annotation can be pre-filled from outside (e.g. by a script or CLI tool) via the file .git/DEPLOYBUTLER_ANNOTATION.</li>
               <li>Added settings to remember the last tag option, tag extension and annotation in the release dialog.</li>
+              <li>AI agent support: MCP tools deploybutler_set_annotation and deploybutler_get_info for the built-in MCP server of the IDE, and a settings button that adds a DeployButler hint to AGENTS.md or CLAUDE.md.</li>
             </ul>
         """.trimIndent()
     }

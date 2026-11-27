@@ -231,6 +231,11 @@ DeployButler bietet Settings, um den Ablauf an dein Projekt und deinen Release-P
 - **Tag-Option / Tag-Erweiterung / Annotation merken**  
   Wählt im Release-Dialog die Werte des letzten Deploys vor: die Tag-Option (kein Tag, aus Projektdatei, Revision/Feature/Major, festes Tag oder Custom-Tag inkl. Text), die Tag-Erweiterung und die Annotation.
 
+- **KI-Agents**  
+  KI-Agents können die Tag-Annotation (zum Beispiel mit Release-Notes) vorausfüllen, ohne dass man es ihnen erklären muss:
+  - **MCP-Tools:** Ist der eingebaute MCP-Server der IDE aktiviert und ein Agent damit verbunden, bietet DeployButler die Tools `deploybutler_set_annotation` und `deploybutler_get_info` an (letzter Tag, nächste mögliche Tags, Einstellungen, vorgemerkte Annotation). Agents sehen sie automatisch in ihrer Tool-Liste.
+  - **Agent-Anweisungen:** Die Buttons *Hinweis in AGENTS.md eintragen* / *Hinweis in CLAUDE.md eintragen* schreiben einen markierten DeployButler-Abschnitt (`<!-- deploybutler:start -->` … `<!-- deploybutler:end -->`) in die Datei im Projektroot. Ein erneuter Klick aktualisiert den Abschnitt, statt ihn doppelt anzuhängen. Ohne Klick wird nichts geschrieben.
+
 - **Rebase statt Merge**  
   Verwendet einen Rebase-orientierten Ablauf statt eines klassischen Merges.
 

@@ -40,12 +40,7 @@ class DeployService(
         return result
     }
 
-    private fun repoForProjectBase(): GitRepository? {
-        val mgr = GitUtil.getRepositoryManager(project)
-        val base = project.basePath ?: return mgr.repositories.firstOrNull()
-        val match = mgr.repositories.firstOrNull { base.startsWith(it.root.path) }
-        return match ?: mgr.repositories.firstOrNull()
-    }
+    private fun repoForProjectBase(): GitRepository? = PendingAnnotation.repoForProject(project)
 
     private fun hasUncommittedChanges(repo: GitRepository): Boolean {
         val handler = GitLineHandler(project, repo.root, GitCommand.STATUS)
@@ -86,19 +81,6 @@ class DeployService(
             })
         }
     }
-
-    private fun annotationFile(repo: GitRepository): File? = runCatching {
-        val result = runOrThrow(GitLineHandler(project, repo.root, GitCommand.REV_PARSE).apply {
-            addParameters("--git-dir")
-        })
-        val gitDir = result.output.firstOrNull()?.trim()?.ifBlank { null } ?: return null
-        val dir = File(gitDir).let { if (it.isAbsolute) it else File(repo.root.path, gitDir) }
-        File(dir, ANNOTATION_FILE_NAME)
-    }.getOrNull()
-
-    private fun readPrefilledAnnotation(file: File?): String? = runCatching {
-        file?.takeIf { it.isFile }?.readText(Charsets.UTF_8)?.removePrefix("﻿")?.trim()?.ifBlank { null }
-    }.getOrNull()
 
     private fun initialAnnotation(prefilled: String?): String =
         prefilled
@@ -160,8 +142,8 @@ class DeployService(
             val selectedAnnotationHolder = AtomicReference("")
             val okHolder = AtomicReference(false)
 
-            val prefilledAnnotationFile = annotationFile(repo)
-            val prefilledAnnotation = readPrefilledAnnotation(prefilledAnnotationFile)
+            val prefilledAnnotationFile = PendingAnnotation.file(project, repo)
+            val prefilledAnnotation = PendingAnnotation.read(prefilledAnnotationFile)
 
             ApplicationManager.getApplication().invokeAndWait {
                 val dialog = ReleaseDialog(
@@ -232,6 +214,7 @@ class DeployService(
 
             val tagExtension = selectedTagExtensionHolder.get()
             val newTag = baseTag?.let { if (tagExtension.isBlank()) it else "$it-$tagExtension" }
+            val tagAnnotation = newTag?.let { selectedAnnotationHolder.get().replace(PendingAnnotation.TAG_PLACEHOLDER, it) }
 
             val deployChecks = settings.deployChecks
                 .map { it.trim() }
@@ -252,7 +235,8 @@ class DeployService(
                 sourceBranch = sourceBranch,
                 targetBranch = targetBranch,
                 tag = newTag ?: "(no tag)",
-                settings = settings
+                settings = settings,
+                annotation = tagAnnotation
             )
 
             if (settings.dryRunEnabled) {
@@ -289,13 +273,12 @@ class DeployService(
                     deleteTagIfExists(repo, remote, newTag)
                 }
                 runOrThrow(GitLineHandler(project, repo.root, GitCommand.TAG).apply {
-                    val annotation = selectedAnnotationHolder.get().replace(TAG_PLACEHOLDER, newTag)
-                    addParameters("-a", newTag, "-m", annotation)
+                    addParameters("-a", newTag, "-m", tagAnnotation.orEmpty())
                 })
                 runOrThrow(GitLineHandler(project, repo.root, GitCommand.PUSH).apply { addParameters(remote, newTag) })
 
                 if (prefilledAnnotation != null) {
-                    runCatching { prefilledAnnotationFile?.delete() }
+                    PendingAnnotation.delete(prefilledAnnotationFile)
                 }
             }
 
@@ -337,10 +320,5 @@ class DeployService(
                 )
             }
         }
-    }
-
-    companion object {
-        const val ANNOTATION_FILE_NAME = "DEPLOYBUTLER_ANNOTATION"
-        const val TAG_PLACEHOLDER = "{tag}"
     }
 }

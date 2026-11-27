@@ -234,6 +234,11 @@ DeployButler provides settings to adapt the workflow to your project and release
 - **Remember tag option / tag extension / annotation**  
   Pre-selects the values chosen in the last deploy in the release dialog: the tag option (no tag, from project file, revision/feature/major, fixed tag or custom tag including its text), the tag extension, and the annotation.
 
+- **AI agents**  
+  AI agents can pre-fill the tag annotation (for example with release notes) without being told how:
+  - **MCP tools:** If the built-in MCP server of the IDE is enabled and an agent is connected to it, DeployButler offers the tools `deploybutler_set_annotation` and `deploybutler_get_info` (latest tag, next possible tags, settings, pending annotation). Agents see them automatically in their tool list.
+  - **Agent instructions:** The buttons *Add hint to AGENTS.md* / *Add hint to CLAUDE.md* write a marked DeployButler section (`<!-- deploybutler:start -->` … `<!-- deploybutler:end -->`) into the file in the project root. Clicking again updates the section instead of adding it twice. Nothing is written without clicking.
+
 - **Rebase instead of merge**  
   Uses a rebase-oriented workflow instead of a classic merge.
 

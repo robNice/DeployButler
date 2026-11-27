@@ -9,7 +9,8 @@ object DeployPreviewBuilder {
         sourceBranch: String,
         targetBranch: String,
         tag: String,
-        settings: DeploySettingsState
+        settings: DeploySettingsState,
+        annotation: String? = null
     ): String {
         val operationLabel = if (settings.useRebase) {
             message("preview.strategy.rebase")
@@ -29,6 +30,16 @@ object DeployPreviewBuilder {
             appendLine(message("preview.remote", settings.remoteName))
             appendLine(message("preview.strategy", operationLabel))
             appendLine(message("preview.tagToCreate", tag))
+
+            if (annotation != null) {
+                appendLine()
+                appendLine(message("preview.annotation"))
+                if (annotation.isBlank()) {
+                    appendLine("  " + message("preview.annotation.empty"))
+                } else {
+                    annotation.lines().forEach { appendLine("  $it") }
+                }
+            }
 
             if (deployChecks.isNotEmpty()) {
                 appendLine()
