@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "de.robnice"
-version = "1.6.2"
+version = "1.7.0"
 
 repositories {
     mavenCentral()
@@ -48,6 +48,11 @@ intellijPlatform {
               <li>The annotation can be pre-filled from outside (e.g. by a script or CLI tool) via the file .git/DEPLOYBUTLER_ANNOTATION.</li>
               <li>Added settings to remember the last tag option, tag extension and annotation in the release dialog.</li>
               <li>AI agent support: MCP tools deploybutler_set_annotation and deploybutler_get_info for the built-in MCP server of the IDE, and a settings button that adds a DeployButler hint to AGENTS.md or CLAUDE.md.</li>
+              <li>The tag annotation is shown in the deploy preview.</li>
+            </ul>
+          <h2>Changed</h2>
+            <ul>
+              <li>No hard-coded default annotation ("Deploy &lt;tag&gt;") anymore. An empty annotation field creates an annotated tag with an empty message.</li>
             </ul>
         """.trimIndent()
     }

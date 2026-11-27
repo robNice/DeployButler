@@ -40,8 +40,18 @@ jobs:
       - name: Build plugin
         run: ./gradlew buildPlugin
 
+      - name: Extract tag annotation as release notes
+        shell: bash
+        run: |
+          set -euo pipefail
+          # actions/checkout may fetch the tag without its annotation, so re-fetch the tag objects
+          git fetch --force --tags
+          git tag -l --format='%(contents)' "$GITHUB_REF_NAME" > release-notes.md
+          cat release-notes.md
+
       - name: Create GitHub Release and upload asset
         uses: softprops/action-gh-release@v2
         with:
           files: build/distributions/*.zip
+          body_path: release-notes.md
           generate_release_notes: true
