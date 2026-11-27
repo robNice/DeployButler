@@ -223,6 +223,17 @@ DeployButler provides settings to adapt the workflow to your project and release
 - **Fixed tag**  
   Optional fixed tag that is offered as an additional choice in the release dialog.
 
+- **Default tag annotation**  
+  Text that is pre-filled into the annotation field of the release dialog. `{tag}` is replaced with the final tag name (for example `Deploy {tag}` → `Deploy v1.2.3`).  
+  The annotation can also be pre-filled from outside, e.g. by a script or CLI tool, by writing it to `.git/DEPLOYBUTLER_ANNOTATION`:
+  ```bash
+  echo "Release with new export feature" > .git/DEPLOYBUTLER_ANNOTATION
+  ```
+  This file takes precedence over the default and the remembered annotation and is deleted after the tag has been created.
+
+- **Remember tag option / tag extension / annotation**  
+  Pre-selects the values chosen in the last deploy in the release dialog: the tag option (no tag, from project file, revision/feature/major, fixed tag or custom tag including its text), the tag extension, and the annotation.
+
 - **Rebase instead of merge**  
   Uses a rebase-oriented workflow instead of a classic merge.
 

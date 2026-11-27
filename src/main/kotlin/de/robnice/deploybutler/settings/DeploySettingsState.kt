@@ -21,6 +21,14 @@ class DeploySettingsState : PersistentStateComponent<DeploySettingsState> {
     var preferredVersionDetector: String = ""
     var deployChecks: MutableList<String> = mutableListOf()
     var autoUpdateVersion: Boolean = false
+    var defaultAnnotation: String = ""
+    var rememberTagOption: Boolean = false
+    var rememberTagExtension: Boolean = false
+    var rememberAnnotation: Boolean = false
+    var lastReleaseType: String = ""
+    var lastCustomTag: String = ""
+    var lastTagExtension: String = ""
+    var lastAnnotation: String = ""
 
     override fun getState(): DeploySettingsState = this
 

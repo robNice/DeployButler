@@ -40,7 +40,10 @@ intellijPlatform {
           <h2>New</h2>
             <ul>
               <li>Added automatic version detection from plain VERSION files (VERSION, VERSION.txt, version.txt) in the project root.</li>
-              <li>Added a tag annotation field to the release dialog. If left empty, the default annotation "Deploy &lt;tag&gt;" is used.</li>
+              <li>Added a tag annotation field to the release dialog.</li>
+              <li>Added a configurable default tag annotation (pre-filled in the release dialog, supports the {tag} placeholder).</li>
+              <li>The annotation can be pre-filled from outside (e.g. by a script or CLI tool) via the file .git/DEPLOYBUTLER_ANNOTATION.</li>
+              <li>Added settings to remember the last tag option, tag extension and annotation in the release dialog.</li>
             </ul>
         """.trimIndent()
     }

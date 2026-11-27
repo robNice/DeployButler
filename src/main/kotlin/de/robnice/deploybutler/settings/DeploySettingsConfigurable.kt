@@ -11,7 +11,11 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.ContextHelpLabel
 import com.intellij.ui.JBColor
+import com.intellij.ui.components.JBScrollPane
+import com.intellij.ui.components.JBTextArea
+import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.AlignY
+import de.robnice.deploybutler.git.DeployService
 import com.intellij.ui.dsl.builder.panel
 import com.intellij.openapi.fileChooser.FileChooser
 import com.intellij.openapi.ui.TextComponentAccessor
@@ -45,6 +49,13 @@ class DeploySettingsConfigurable(
     }
     private val deployChecksEditor = DeployChecksEditorPanel()
     private val tagExtensionsEditor = DeployChecksEditorPanel("Add tag extension", "Remove tag extension")
+    private val defaultAnnotationArea = JBTextArea(4, 40).apply {
+        lineWrap = true
+        wrapStyleWord = true
+    }
+    private val rememberTagOptionCheckbox = JCheckBox(message("settings.rememberTagOption"))
+    private val rememberTagExtensionCheckbox = JCheckBox(message("settings.rememberTagExtension"))
+    private val rememberAnnotationCheckbox = JCheckBox(message("settings.rememberAnnotation"))
 
     init {
         setupCustomPathChooser()
@@ -99,6 +110,33 @@ class DeploySettingsConfigurable(
                     cell(confirmCheckbox)
                 }
                 helpRow("settings.help.confirm")
+            }
+
+            group(message("settings.section.releaseDialog")) {
+                row {
+                    label(message("settings.defaultAnnotation"))
+                        .align(AlignY.TOP)
+
+                    cell(JBScrollPane(defaultAnnotationArea))
+                        .resizableColumn()
+                        .align(AlignX.FILL)
+
+                    cell(ContextHelpLabel.create(
+                        message("settings.help.defaultAnnotation", DeployService.TAG_PLACEHOLDER, DeployService.ANNOTATION_FILE_NAME)
+                    ))
+                        .align(AlignY.TOP)
+                }
+
+                row {
+                    cell(rememberTagOptionCheckbox)
+                }
+                row {
+                    cell(rememberTagExtensionCheckbox)
+                }
+                row {
+                    cell(rememberAnnotationCheckbox)
+                }
+                helpRow("settings.help.remember")
             }
 
             group(message("settings.section.versionDetection")) {
@@ -241,6 +279,11 @@ class DeploySettingsConfigurable(
         customPathField.text = settings.versionCustomPath
         customRegexField.text = settings.versionCustomRegex
         deployChecksEditor.setChecks(settings.deployChecks)
+
+        defaultAnnotationArea.text = settings.defaultAnnotation
+        rememberTagOptionCheckbox.isSelected = settings.rememberTagOption
+        rememberTagExtensionCheckbox.isSelected = settings.rememberTagExtension
+        rememberAnnotationCheckbox.isSelected = settings.rememberAnnotation
     }
 
     override fun isModified(): Boolean =
@@ -256,7 +299,11 @@ class DeploySettingsConfigurable(
                 (preferredDetectorCombo.selectedItem as? String ?: "").trim() != settings.preferredVersionDetector ||
                 customPathField.text.trim() != settings.versionCustomPath ||
                 customRegexField.text.trim() != settings.versionCustomRegex ||
-                deployChecksEditor.getChecks() != settings.deployChecks
+                deployChecksEditor.getChecks() != settings.deployChecks ||
+                defaultAnnotationArea.text.trim() != settings.defaultAnnotation ||
+                rememberTagOptionCheckbox.isSelected != settings.rememberTagOption ||
+                rememberTagExtensionCheckbox.isSelected != settings.rememberTagExtension ||
+                rememberAnnotationCheckbox.isSelected != settings.rememberAnnotation
 
     override fun apply() {
         settings.targetBranch = branchField.text.trim().ifBlank { "main" }
@@ -273,6 +320,17 @@ class DeploySettingsConfigurable(
         settings.versionCustomPath = toRelativeProjectPath(customPathField.text)
         settings.versionCustomRegex = customRegexField.text
         settings.deployChecks = deployChecksEditor.getChecks()
+
+        settings.defaultAnnotation = defaultAnnotationArea.text.trim()
+        settings.rememberTagOption = rememberTagOptionCheckbox.isSelected
+        settings.rememberTagExtension = rememberTagExtensionCheckbox.isSelected
+        settings.rememberAnnotation = rememberAnnotationCheckbox.isSelected
+        if (!settings.rememberTagOption) {
+            settings.lastReleaseType = ""
+            settings.lastCustomTag = ""
+        }
+        if (!settings.rememberTagExtension) settings.lastTagExtension = ""
+        if (!settings.rememberAnnotation) settings.lastAnnotation = ""
     }
 
     override fun getDisplayName(): String = message("settings.title")

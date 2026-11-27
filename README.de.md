@@ -220,6 +220,17 @@ DeployButler bietet Settings, um den Ablauf an dein Projekt und deinen Release-P
 - **Festes Tag**  
   Optionaler fester Tag, der im Release-Dialog als zusätzliche Auswahl angeboten wird.
 
+- **Standard-Tag-Annotation**  
+  Text, der im Release-Dialog in das Annotationsfeld vorausgefüllt wird. `{tag}` wird durch den finalen Tag-Namen ersetzt (zum Beispiel `Deploy {tag}` → `Deploy v1.2.3`).  
+  Die Annotation kann auch von außen vorausgefüllt werden, z. B. von einem Skript oder CLI-Tool, indem sie nach `.git/DEPLOYBUTLER_ANNOTATION` geschrieben wird:
+  ```bash
+  echo "Release mit neuem Export-Feature" > .git/DEPLOYBUTLER_ANNOTATION
+  ```
+  Diese Datei hat Vorrang vor der Standard- und der gemerkten Annotation und wird nach dem Erstellen des Tags gelöscht.
+
+- **Tag-Option / Tag-Erweiterung / Annotation merken**  
+  Wählt im Release-Dialog die Werte des letzten Deploys vor: die Tag-Option (kein Tag, aus Projektdatei, Revision/Feature/Major, festes Tag oder Custom-Tag inkl. Text), die Tag-Erweiterung und die Annotation.
+
 - **Rebase statt Merge**  
   Verwendet einen Rebase-orientierten Ablauf statt eines klassischen Merges.
 

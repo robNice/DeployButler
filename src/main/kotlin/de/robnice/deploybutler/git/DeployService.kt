@@ -87,6 +87,37 @@ class DeployService(
         }
     }
 
+    private fun annotationFile(repo: GitRepository): File? = runCatching {
+        val result = runOrThrow(GitLineHandler(project, repo.root, GitCommand.REV_PARSE).apply {
+            addParameters("--git-dir")
+        })
+        val gitDir = result.output.firstOrNull()?.trim()?.ifBlank { null } ?: return null
+        val dir = File(gitDir).let { if (it.isAbsolute) it else File(repo.root.path, gitDir) }
+        File(dir, ANNOTATION_FILE_NAME)
+    }.getOrNull()
+
+    private fun readPrefilledAnnotation(file: File?): String? = runCatching {
+        file?.takeIf { it.isFile }?.readText(Charsets.UTF_8)?.removePrefix("﻿")?.trim()?.ifBlank { null }
+    }.getOrNull()
+
+    private fun initialAnnotation(prefilled: String?): String =
+        prefilled
+            ?: settings.lastAnnotation.takeIf { settings.rememberAnnotation && it.isNotBlank() }
+            ?: settings.defaultAnnotation
+
+    private fun rememberSelection(type: ReleaseType, customTag: String, tagExtension: String, annotation: String) {
+        if (settings.rememberTagOption) {
+            settings.lastReleaseType = type.name
+            settings.lastCustomTag = customTag
+        }
+        if (settings.rememberTagExtension) {
+            settings.lastTagExtension = tagExtension
+        }
+        if (settings.rememberAnnotation) {
+            settings.lastAnnotation = annotation
+        }
+    }
+
     fun run() {
         val repo = repoForProjectBase() ?: run {
             DeployNotifications.error(project, message("deploy.noRepo"))
@@ -129,6 +160,9 @@ class DeployService(
             val selectedAnnotationHolder = AtomicReference("")
             val okHolder = AtomicReference(false)
 
+            val prefilledAnnotationFile = annotationFile(repo)
+            val prefilledAnnotation = readPrefilledAnnotation(prefilledAnnotationFile)
+
             ApplicationManager.getApplication().invokeAndWait {
                 val dialog = ReleaseDialog(
                     project,
@@ -138,7 +172,13 @@ class DeployService(
                     settings.fixedTag,
                     detectionResult,
                     settings.autoUpdateVersion,
-                    settings.tagExtensions.map { it.trim() }.filter { it.isNotBlank() }
+                    settings.tagExtensions.map { it.trim() }.filter { it.isNotBlank() },
+                    initialType = if (settings.rememberTagOption) {
+                        ReleaseType.entries.firstOrNull { it.name == settings.lastReleaseType }
+                    } else null,
+                    initialCustomTag = if (settings.rememberTagOption) settings.lastCustomTag else "",
+                    initialTagExtension = if (settings.rememberTagExtension) settings.lastTagExtension else "",
+                    initialAnnotation = initialAnnotation(prefilledAnnotation)
                 )
                 val ok = dialog.showAndGet()
                 okHolder.set(ok)
@@ -147,6 +187,12 @@ class DeployService(
                     selectedCustomTagHolder.set(dialog.getCustomTag())
                     selectedTagExtensionHolder.set(dialog.getTagExtension())
                     selectedAnnotationHolder.set(dialog.getAnnotation())
+                    rememberSelection(
+                        dialog.getSelectedType(),
+                        dialog.getCustomTag(),
+                        dialog.getTagExtension(),
+                        dialog.getAnnotation()
+                    )
                 }
             }
 
@@ -243,10 +289,14 @@ class DeployService(
                     deleteTagIfExists(repo, remote, newTag)
                 }
                 runOrThrow(GitLineHandler(project, repo.root, GitCommand.TAG).apply {
-                    val annotation = selectedAnnotationHolder.get().ifBlank { "Deploy $newTag" }
+                    val annotation = selectedAnnotationHolder.get().replace(TAG_PLACEHOLDER, newTag)
                     addParameters("-a", newTag, "-m", annotation)
                 })
                 runOrThrow(GitLineHandler(project, repo.root, GitCommand.PUSH).apply { addParameters(remote, newTag) })
+
+                if (prefilledAnnotation != null) {
+                    runCatching { prefilledAnnotationFile?.delete() }
+                }
             }
 
             DeployNotifications.info(project, message("deploy.success", newTag ?: "(no tag)"))
@@ -287,5 +337,10 @@ class DeployService(
                 )
             }
         }
+    }
+
+    companion object {
+        const val ANNOTATION_FILE_NAME = "DEPLOYBUTLER_ANNOTATION"
+        const val TAG_PLACEHOLDER = "{tag}"
     }
 }

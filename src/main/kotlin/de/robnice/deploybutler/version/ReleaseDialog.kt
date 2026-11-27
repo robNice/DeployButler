@@ -29,17 +29,26 @@ class ReleaseDialog(
     private val fixedTag: String?,
     private val detectionResult: VersionDetectionResult? = null,
     private val autoUpdateEnabled: Boolean = false,
-    private val tagExtensions: List<String> = emptyList()
+    private val tagExtensions: List<String> = emptyList(),
+    initialType: ReleaseType? = null,
+    initialCustomTag: String = "",
+    initialTagExtension: String = "",
+    initialAnnotation: String = ""
 ) : DialogWrapper(project) {
 
-    private var selectedType: ReleaseType = ReleaseType.NONE
-    private val customTagField = JTextField()
-    private val tagExtensionCombo = ComboBox(arrayOf("") + tagExtensions)
+    private var selectedType: ReleaseType = initialType
+        ?.takeIf { isTypeAvailable(it) }
+        ?: ReleaseType.NONE
+    private val customTagField = JTextField(initialCustomTag)
+    private val tagExtensionCombo = ComboBox(arrayOf("") + tagExtensions).apply {
+        if (initialTagExtension in tagExtensions) selectedItem = initialTagExtension
+    }
     private var fromProjectFileLabel: JLabel? = null
     private var formPanel: DialogPanel? = null
-    private val annotationArea = JBTextArea(10, 30).apply {
+    private val annotationArea = JBTextArea(initialAnnotation, 10, 30).apply {
         lineWrap = true
         wrapStyleWord = true
+        caretPosition = 0
     }
 
     init {
@@ -157,6 +166,12 @@ class ReleaseDialog(
             add(formPanel, BorderLayout.WEST)
             add(annotationPanel, BorderLayout.CENTER)
         }
+    }
+
+    private fun isTypeAvailable(type: ReleaseType): Boolean = when (type) {
+        ReleaseType.FROM_PROJECT_FILE -> detectedVersionText != null
+        ReleaseType.FIXED -> !fixedTag.isNullOrBlank()
+        else -> true
     }
 
     private fun showUpdateVersionInFileDialog() {
